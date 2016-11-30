@@ -1,2 +1,2 @@
-# kenobe
-Text based report generation tool for pentester types (because what kind of pentester wants to write reports in a browser)
+# yarg
+yarg (yet another report generator) is a text based report generation tool by pentesters for pentesers (and pirates).
