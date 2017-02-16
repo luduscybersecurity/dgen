@@ -1,0 +1,26 @@
+.header {
+    width:99%;
+    text-align:center;
+}
+
+.footer {
+    width:99%;
+    position:relative;
+}
+
+.alignleft {
+    width:33%;
+    float:left;
+    text-align:left;
+}
+.aligncenter {
+    width:33%;
+    float:left;
+    text-align:center;
+}
+.alignright {
+    width:33%;
+    float: right;
+    text-align:right;
+    margin-right:2px;
+}

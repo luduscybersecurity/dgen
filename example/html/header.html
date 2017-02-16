@@ -1,0 +1,34 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <script>
+function getUrlVars()
+{
+        var vars = [], hash;
+        var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+        for(var i = 0; i < hashes.length; i++)
+        {
+                hash = hashes[i].split('=');                        
+                vars[hash[0]] = hash[1];
+        }
+        return vars;
+}
+
+function substitute()
+{
+	var url_vars = getUrlVars();
+	Object.keys(url_vars).forEach(function (key) {
+            var value = url_vars[key]; 
+			document.getElementById(key).innerHTML = value;
+		})
+}
+        </script>
+    
+        <link rel="stylesheet" href="css/template.css"> 
+        <link rel="stylesheet" href="css/footer.css"> 
+    </head>
+<body onload="substitute()" class="margin">
+    <div class="header"> 
+        <span id="classifcation" style="text-align:center;color:#F00;font-weight:bold"></span> 
+    </div>
+</body></html>

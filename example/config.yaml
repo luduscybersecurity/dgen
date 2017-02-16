@@ -1,0 +1,19 @@
+sections:
+  - cover:
+      files: 'cover'
+      html_options: 
+          - '--template=.yarg/template-title.html'
+  - section: 
+      files: 
+          - 'docinfo.md'
+          - 'exec.md'
+  - toc: 
+      pdf_options:
+          - '--xsl-style-sheet toc.template.xsl'
+  - section: 
+      files: 
+          - 'intro.md'
+          - 'finding1.md'
+          - 'finding2.md'
+          - 'appendix.md'
+pdf_filename: 'report.pdf'
