@@ -4,6 +4,7 @@ import errno
 import shutil
 import os
 import re
+import mimetypes
 
 def delete_folder(path):
     '''
@@ -53,7 +54,7 @@ def get_html_dir():
 
 def replace_html_dir_symbol_in_str(string):
     '''
-    Replace all instances of %{html_dir} with the 
+    Replace all instances of %{html_dir} with the html directory
     '''
     pattern = re.compile(r'\%\{html_dir\}')
     string = pattern.sub(get_html_dir(), string)
@@ -64,10 +65,11 @@ def replace_html_dir_symbol_in_file(path):
     Parse the file name in folder root to replace
     %{html_dir} with the supplied value
     '''
-    with open(path, 'r') as fpr:
-        contents = fpr.read()
-        fpr.close()
-        contents = replace_html_dir_symbol_in_str(contents)
-        with open(path, 'w') as fpw:
-            fpw.write(contents)
-            fpw.close()
+    if mimetypes.guess_type(path) == ('text/css', None):
+        with open(path, 'r') as fpr:
+            contents = fpr.read()
+            fpr.close()
+            contents = replace_html_dir_symbol_in_str(contents)
+            with open(path, 'w') as fpw:
+                fpw.write(contents)
+                fpw.close()
