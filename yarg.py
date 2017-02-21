@@ -78,7 +78,6 @@ class Yarg(object):
         parser_pdf.set_defaults(func=self.generate_pdf)
 
     def add_repo_options(self, subparser):
-        
         return
 
     def parse_options(self):
@@ -92,7 +91,11 @@ class Yarg(object):
         self.add_repo_options(subparser)
 
         args = parser.parse_args()
-        args.func(args)
+        try:
+            args.func(args)
+        except AttributeError:
+            parser.print_usage()
+            parser.print_help()
 
 if __name__ == '__main__':
     Yarg()
