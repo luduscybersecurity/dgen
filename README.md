@@ -3,7 +3,7 @@ dgen (yet another report generator) is a text based report generation tool by pe
 
 ## TODO
 
-* Pick a new name because this one shits me
+* move these issues to the issues section
 * Write a check to ensure that variables haven't been left over after generating html
   * include %{} and ${}
 * Add support for a section as keys rather than list, ie.
@@ -41,3 +41,4 @@ vs
 ```
 
 * Bug when regenerating document, doesn't seem to update filename. Look at test plan for ColmanComms
+* Generate pdf files in pdf folder rather than html where they get clobbered
