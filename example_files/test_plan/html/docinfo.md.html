@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <meta name="author" content="George Stewart">
+  <meta name="dcterms.date" content="2018-01-02">
+  <title>Invoice Portal Penetration Test Plan</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="css/template.css">
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body class="margin">
+<h1 id="executive-summary">Executive Summary</h1>
+<p>This document, prepared by Colman Communciations, defines the scope of the penetration test against BTB’s Invoice Portal, rules of engagement, and checklists that need to be completed before the penetration test can commence.</p>
+<p>The assessment is planned to start on 3 January 2018, conclude on 12 January 2018, with delivery of a draft report on 15 January 2018.</p>
+<h2 id="client-responsibilities">BTB Responsibilities</h2>
+<ul>
+<li>Provide a single point of contact with the authority and responsibility to make binding decisions in relation to matters within the scope of this engagement.</li>
+<li>Provide timely responses to all queries throughout the engagement.</li>
+<li>Ensure that appropriate IT service and business function owners have been adequately informed of the project and agree to provide support and information as requested.</li>
+<li>Co-ordinate all activities with IT operations, business owners and other third parties and is responsible for any direct project management activities including change control and associated requirements.</li>
+<li>Maintain backups and other means of recovering services and data that may be adversely affected.</li>
+<li>Inform Colman Communciations immediately of any detected adverse effects caused by testing, and early termination of testing if required.</li>
+<li>Inform Colman Communciations immediately of any changes to ownership of in-scope systems, or the inclusion of any third party servers, devices and services in the assessment scope.</li>
+<li>Complete all activities in the checklist at the end of this document and notify Colman Communciations at least two business days prior to planned test commencement.</li>
+<li>Inform Colman Communciations immediately if a variation to the schedule is required.</li>
+<li>If retesting report findings is in scope, a single exercise will be scheduled within two (2) weeks of the report delivery, unless another time is agreed in the kick-off meeting.</li>
+</ul>
+<h1 id="scope">Scope</h1>
+<h2 id="background">Background</h2>
+<p>Building Telco Businesses (BTB) is a company specialising in whitelabling broadband telecommunications services to businesses with existing customer bases. BTB provide the complete range of services required to operate an internet service provider, allowing their customers to focus on the sales and marketing.</p>
+<p>BTB has entered into an agreement with a large energy provider to whitelabel their services, who has specified that their systems be subject to network and web application penetration testing prior to launch. One round of testing has been completed, with a second required.</p>
+<p>Part of BTB’s offering is an Invoice Portal, which requires security testing. In addition, further retesting is required from the previous round of penetration testing.</p>
+<h2 id="threat-model">Threat Model</h2>
+<p>Several threats have been identified as being of interest:</p>
+<ul>
+<li>Attacks from application users</li>
+<li>Attacks from the broader Internet</li>
+</ul>
+<p>Of particular concern to BTB are attacks that could result in:</p>
+<ul>
+<li>Remote compromise of BTB systems</li>
+<li>Unauthorised disclosure of commercial and/or personally identifiable information</li>
+<li>Fraud or other loss of money</li>
+</ul>
+<p>BTB have stated that all users should have access to all functions.</p>
+<h2 id="activities">Activities</h2>
+<p>The following activities are in-scope for this assessment:</p>
+<ul>
+<li>A penetration test of the Invoice Portal</li>
+<li>Delivery of a single report covering all activities above</li>
+<li>Retesting of fixes implemented for vulnerabilities identified during the assessment and confirmation they are effective</li>
+<li>A review of remediation performed as a result of previous testing:
+<ul>
+<li>Missing/Default passwords</li>
+<li>Domain privileges</li>
+</ul></li>
+</ul>
+<h2 id="exclusions">Exclusions</h2>
+<p>The following activities are out of scope:</p>
+<ul>
+<li>Colman Communciations will not implement fixes for vulnerabilities identified the assessment</li>
+<li>Denial of service is out of scope</li>
+<li>Social engineering is out of scope</li>
+<li>Any activities not explicitly defined as in-scope is out of scope</li>
+</ul>
+<h1 id="rules-of-engagement">Rules of Engagement</h1>
+<h2 id="proposed-dates">Proposed Dates</h2>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Milestone</th>
+<th style="text-align: left;">Date</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Test Start</td>
+<td style="text-align: left;">3 January 2018</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Test End</td>
+<td style="text-align: left;">12 January 2018</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Draft Report Delivery</td>
+<td style="text-align: left;">15 January 2018</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Acceptance of Final Report</td>
+<td style="text-align: left;">19 January 2018</td>
+</tr>
+</tbody>
+</table>
+<h2 id="system-details">System Details</h2>
+<p>The following system details have been provided:</p>
+<table>
+<colgroup>
+<col style="width: 35%" />
+<col style="width: 34%" />
+<col style="width: 29%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">System</th>
+<th style="text-align: left;">IP/URL</th>
+<th style="text-align: left;">Entry Point</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Invoice Portal</td>
+<td style="text-align: left;">http://10.3.65.74:9999/</td>
+<td style="text-align: left;">http://10.3.65.74:9999/</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Retest systems</td>
+<td style="text-align: left;">10.3.11.11, 10.3.11.12, 10.3.11.13, 10.3.11.14, 10.3.11.16, 10.3.11.17, 10.3.11.18</td>
+<td style="text-align: left;">N/A</td>
+</tr>
+</tbody>
+</table>
+<h2 id="accounts">Accounts</h2>
+<p>The following accounts will be supplied:</p>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Account Type</th>
+<th style="text-align: left;">Number</th>
+<th style="text-align: left;">System</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Portal User</td>
+<td style="text-align: left;">3</td>
+<td style="text-align: left;">Invoice Portal</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Domain Administrator</td>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">b2b.local</td>
+</tr>
+</tbody>
+</table>
+<h2 id="contacts">Contacts</h2>
+<table>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 18%" />
+<col style="width: 30%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Role</th>
+<th style="text-align: left;">Number</th>
+<th style="text-align: left;">Email</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">George Stewart</td>
+<td style="text-align: left;">Penetration Tester</td>
+<td style="text-align: left;">0432 918 830</td>
+<td style="text-align: left;">george.stewart@colmancomm.com</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Sachin Patel</td>
+<td style="text-align: left;">GM - Product &amp; Technology</td>
+<td style="text-align: left;">0411 655 405</td>
+<td style="text-align: left;">sachin@btbaustralia.com.au</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Graham Corrigan</td>
+<td style="text-align: left;">GM - Software and Architecture</td>
+<td style="text-align: left;">0409 368 903</td>
+<td style="text-align: left;">graham@btbaustralia.com.au</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Clem Colman</td>
+<td style="text-align: left;">Security Consultant</td>
+<td style="text-align: left;">0417 744 511</td>
+<td style="text-align: left;">clem@colmancomm.com</td>
+</tr>
+</tbody>
+</table>
+<h2 id="permitted-activities">Permitted Activities</h2>
+<p>The following table shows activities that are permitted and those that are expressly forbidden. Any activity not included in this list is forbidden by default.</p>
+<p>Colman Communciations will seek specific agreement should any actions potentially affect the integrity or availability of targeted systems.</p>
+<h3 id="external-testing">External testing</h3>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Activity</th>
+<th style="text-align: left;">Execution Permission</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Network scanning and service identification</td>
+<td style="text-align: left;">PERMITTED</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Vulnerability scanning and identification</td>
+<td style="text-align: left;">PERMITTED</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Vulnerability exploitation</td>
+<td style="text-align: left;">PERMITTED</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Modification of system configurations</td>
+<td style="text-align: left;">PERMITTED (CINDY ONLY)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Modification of application/business data</td>
+<td style="text-align: left;">PERMITTED (CINDY ONLY)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Brute force attempts</td>
+<td style="text-align: left;">PERMITTED</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Denial of Service (DoS) testing</td>
+<td style="text-align: left;">NOT PERMITTED</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Social engineering</td>
+<td style="text-align: left;">NOT PERMITTED</td>
+</tr>
+</tbody>
+</table>
+<h2 id="third-parties">Third Parties</h2>
+<p>The following third parties have been identified as managing systems under test, or as being likely to recieve security events while testing is underway. They should be notified that the penetration test is taking place, and given a chance to warn users, security teams, system managers and upstream providers that there may be a potential interuption to services and/or a large number of security events generated.</p>
+<ul>
+<li>N/A</li>
+</ul>
+<h2 id="source-ips">Source IPs</h2>
+<p>The penetration test will be performed from the following IP addresses:</p>
+<ul>
+<li>N/A</li>
+</ul>
+<p>Intrusion Detection Systems and other automatic countermeasures operated by BTB or other third parties should be configured to ignore traffic from these addresses for the test.</p>
+<h1 id="checklist">Checklist</h1>
+<p>The following pre-requisites must be met before Colman Communciations can begin the penetration test:</p>
+<ul>
+<li>Ownership of target systems confirmed</li>
+<li>Disaster recovery in place and tested</li>
+<li>System owner(s) notified of activity</li>
+<li>Acknowledgement of client responsibilities</li>
+<li>Acceptance of rules of engagement</li>
+<li>Third parties identified</li>
+<li>Third parties notified of activity</li>
+</ul>
+<p>In addition to the accounts, IP addresses and entry points defined above, BTB will provide the following:</p>
+<ul>
+<li>Application frameworks, libraries and versions</li>
+<li>Application source code</li>
+</ul>
+<p>The following activities must be completed to confirm environment readiness:</p>
+<ul>
+<li>Provide VPN access</li>
+<li>Environment access tested by BTB</li>
+<li>Environment access confirmed by Colman Communciations</li>
+<li>Test accounts created by BTB</li>
+<li>Test account details supplied to Colman Communciations</li>
+<li>Test accounts confirmed by Colman Communciations</li>
+<li>Intrusion Detection Systems disabled</li>
+<li>Provide domain administrator credentials</li>
+</ul>
+<h1 id="document-management">Document Management</h1>
+<h2 id="filename">Filename</h2>
+<p>btb_invoice_portal_2018_test_plan_v1.0.pdf</p>
+<h2 id="change-history">Change History</h2>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Version</th>
+<th style="text-align: left;">Date</th>
+<th style="text-align: left;">Author</th>
+<th style="text-align: left;">Change Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">0.1</td>
+<td style="text-align: left;">2 January 2018</td>
+<td style="text-align: left;">George Stewart</td>
+<td style="text-align: left;">Draft complete</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">0.2</td>
+<td style="text-align: left;">2 January 2018</td>
+<td style="text-align: left;">Clem Colman</td>
+<td style="text-align: left;">Internal QA</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">1.0</td>
+<td style="text-align: left;">2 January 2018</td>
+<td style="text-align: left;">George Stewart</td>
+<td style="text-align: left;">Initial release to client</td>
+</tr>
+</tbody>
+</table>
+<h2 id="referenced-documents">Referenced Documents</h2>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Title</th>
+<th style="text-align: left;">Filename</th>
+<th style="text-align: left;">Version</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">N/A</td>
+<td style="text-align: left;">N/A</td>
+<td style="text-align: left;">N/A</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<div style="font-size:9px;position=fixed;bottom=0;">
+<p>© 2017, Colman Communciations.</p>
+<p>Portions of this document and the templates used in its production are the property of Colman Communciations and may not be copied without permission.</p>
+<h3 id="disclaimer">Disclaimer</h3>
+<p>Colman Communciations notes that penetration tests are limited in a number of aspects:</p>
+<ul>
+<li>They are conducted with limited resources over a limited period of time. An attacker may not face the same constraints.</li>
+<li>They are a point in time assessment. Changes to the security landscape including the discovery of new vulnerabilities, attack techniques, and changes in the CINDY and corporate network infrastructure ’s configuration may lead to new vulnerabilities over time.</li>
+<li>They are performed in a specific environemnt. There may be differences in configuration between the environment assessed and others.</li>
+</ul>
+<p>As a result, Colman Communciations gives no guarantee, warranty, or assurance that the services it has performed and provided pursuant to the assessment will have the effect of:</p>
+<ul>
+<li>Identifying an exhaustive list of all threats and risks to the Client’s systems;</li>
+<li>Documenting all possible controls that might be applied to remediate identified threats and risks; and or</li>
+<li>Being continually accurate and relevant as threats and risks as identified by the Vendor (and any recommended controls) may be time specific.</li>
+</ul>
+<p>Threats and risks to assessed systems and controls that have been implemented to remediate such risks and threats should be reviewed regularly to ensure their currency and efficacy.</p>
+</div>
+    </div>
+</body>
+</html>

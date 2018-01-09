@@ -1,0 +1,32 @@
+---
+company: Colman Communciations
+
+client_long: Building Telco Businesses
+client: BTB
+title: Invoice Portal Penetration Test Plan
+test_target: Invoice Portal
+author: George Stewart
+qa_reviewer: Clem Colman
+date: 2 January 2018
+version: 1.0
+
+sow_title: SOW Title
+sow_filename: SOW Filename
+sow_date: 10 December 2016
+
+target_name: CINDY and corporate network infrastructure
+classification: Commercial in Confidence
+assessment_type: penetration test
+
+planned_start: 3 January 2018
+planned_end: 12 January 2018
+planned_draft: 15 January 2018
+planned_final: 19 January 2018
+
+filename: btb_invoice_portal_2018_test_plan_v1.0.pdf
+
+draft_complete: 2 January 2018
+date_qa: 2 January 2018
+date_release: 2 January 2018
+
+...

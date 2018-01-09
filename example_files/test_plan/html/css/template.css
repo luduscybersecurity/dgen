@@ -1,0 +1,113 @@
+/*! normalize.css v2.1.3 | MIT License | git.io/normalize */
+
+/* ==========================================================================
+   HTML5 display definitions
+   ========================================================================== */
+
+@import url('PalatinoLinotype.css');
+@import url('compat.css');
+
+body {
+    counter-reset: reccounter treatmentcounter findingcounter appendixcounter;
+}
+
+.rec ol > li {list-style: none;}
+
+.rec ol > li:before { 
+    content: "R" counter(reccounter) ". "; 
+    counter-increment:reccounter;
+}
+
+.treatment ol > li {list-style: none;}
+
+.treatment ol > li:before { 
+    content: "T" counter(treatmentcounter) ". "; 
+    counter-increment: treatmentcounter;
+}
+
+.finding :before {
+    content: "Finding " counter(findingcounter) " - "; 
+    counter-increment: findingcounter;
+}
+
+.finding{page-break-before: always}
+
+.appendix :before {
+    content: "Appendix " counter(appendixcounter) " - ";
+    counter-increment: appendixcounter;
+}
+
+.clrtbl table {border-collapse:collapse;border-spacing:0;text-align:left;margin:0 auto;border:1px solid #069;} 
+.clrtbl table thead th {background:-webkit-gradient(linear,left top,left bottom,color-stop(0.05, #069),color-stop(1, #00557F));background:-moz-linear-gradient(center top,#069 5%,#00557F 100%);filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#069',endColorstr='#00557F');background-color:#069;color:#FFFFFF;font-size:11px;font-weight:bold;} 
+.clrtbl table tbody td {color:#000000;font-size: 11px;font-weight: normal;border:1px solid #069;}
+.clrtbl table tbody .even td {background:#E1EEF4;color:#000;}
+
+body{        
+    color:black;
+    font-family: 'Palatino Linotype', sans-serif;
+    -webkit-font-smoothing:subpixel-antialiased;
+    font-size:11px;
+    line-height:1.6;
+    max-width:21cm;
+    margin:0 auto;
+}
+
+.margin {
+    margin-left: 2.5cm;
+    margin-right: 1.5cm;
+}
+
+
+h1{font-size:24px;color:#206495;font-weight:bold;page-break-before: always}
+h2{font-size:18px;color:#206495}
+h3{font-size:14px;color:#206495}
+h4{font-size:11px;color:#206495}
+pre{background-color:#f8f8f8;border:1px solid #ccc;line-height:1.2em;overflow:auto;padding:6px 6px}
+blockquote{}
+
+img{border:1px solid #206495; display: block;margin-left: auto;margin-right: auto;}
+img.noborder{border:0px}
+.caption{text-align:center;font-size:9px;}
+
+table{
+    padding:1em;
+}
+
+figcaption {}
+caption{caption-side:bottom;font-size:9px;}
+
+sup{}
+sub{}
+a{}
+
+.center{
+    display:flex;
+    justify-content:center;
+}
+
+.left{
+    display:flex;
+    justify-content:left;
+}
+
+.right{
+    display:flex;
+    justify-content:right;
+}
+
+.footnote{}
+.title{page-break-before:avoid;font-size:28px}
+.subtitle{page-break-before:avoid;font-size:24px}
+
+.urg{color:#90c;font-weight:bold;}
+.high{color:#F00;font-weight:bold;}
+.med{color:#F90;font-weight:bold;}
+.low{color:#093;font-weight:bold;}
+.opt{color:#0BF;font-weight:bold;}
+.rating{font-size:18px;}
+
+h1,h2,h3,h4{-webkit-font-smoothing:subpixel-antialiased;page-break-after:avoid}
+img,pre,blockquote,table,figure{page-break-inside:avoid}
+img, table, pre {max-width:100%}
+
+code, pre {white-space:pre-wrap !important;word-wrap:break-word !important;}

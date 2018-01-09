@@ -1,0 +1,104 @@
+---
+v_bus_log:
+    name: Business Logic Error
+    rating: Optional
+    num_treatments: '1'
+    status: Untested
+...
+
+---
+v_dflt_pw:
+    name: Missing/Default passwords
+    rating: High
+    num_treatments: '2'
+    status: Untested
+...
+
+---
+v_cc_enc:
+    name: Insecure credit card storage and encryption
+    rating: High
+    num_treatments: '1'
+    status: Fixed
+...
+
+---
+v_vuln_comps:
+    name: Vulnerable libraries in use
+    rating: Urgent
+    num_treatments: '3'
+    status: Partial
+...
+
+---
+v_csrf:
+    name: Application vulnerable to Cross Site Request Forgery
+    rating: Urgent
+    num_treatments: '1'
+    status: Fixed
+...
+
+---
+v_dom_privs:
+    name: Domain Privileges
+    rating: High
+    num_treatments: '3'
+    status: Untested
+...
+
+---
+v_ip_whitelist:
+    name: IP whitelisting not in place as stated
+    rating: Optional
+    num_treatments: '1'
+    status: Untested
+...
+
+---
+v_miss_head:
+    name: Missing HTTP headers
+    rating: Low
+    num_treatments: '1'
+    status: Fixed
+...
+
+---
+v_pass_sec_pol:
+    name: Poor password security policy
+    rating: Medium
+    num_treatments: '3'
+    status: Fixed
+...
+
+---
+v_serv_fp:
+    name: Application infrastructure can be fingerprinted
+    rating: Optional
+    num_treatments: '2'
+    status: Fixed
+...
+
+---
+v_sqli:
+    name: Functions vulnerable to SQL injection
+    rating: Medium
+    num_treatments: '1'
+    status: Fixed
+...
+
+---
+v_xmli:
+    name: Xml Injection
+    rating: High
+    num_treatments: '2'
+    status: Fixed
+...
+
+---
+v_xxe:
+    name: XML External Entity Injection
+    rating: Medium
+    num_treatments: '1'
+    status: Fixed
+...
+

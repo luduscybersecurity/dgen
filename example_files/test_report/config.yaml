@@ -1,0 +1,35 @@
+---
+sections:
+    - cover:
+        files: cover
+        html_options: 
+            - --template=%{template_dir}/template-title.html
+    - toc: 
+        pdf_options:
+            - --xsl-style-sheet toc.template.xsl
+    - section:
+        files: 
+            - exec.md
+            - intro.md
+            - vulnerabilities.md
+            - vuln_components.md
+            - vuln_csrf.md
+            - blah.md
+            - vuln_cc_storage.md
+            - vuln_default_passwords.md
+            - vuln_domain_privileges.md
+            - vuln_xml_injection.md
+            - vuln_password_security.md
+            - vuln_sql_injection.md
+            - vuln_xxe.md
+            - vuln_missing_headers.md
+            - vuln_ip_whitelisting.md
+            - vuln_business_logic.md
+            - vuln_server_fingerprinting.md
+            - methodology.md
+            - appendix.md
+            - docinfo.md
+template: templates/colmancom
+pdf_filename: btb_2017_test_report_v1.1.pdf
+
+...
