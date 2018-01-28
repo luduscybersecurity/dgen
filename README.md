@@ -83,3 +83,16 @@ Each project can be put into its own git repository.
     * grep remote projects for text
 * Auto order markdown files based on variable values
 * Rules to allow operations on variables (e.g. counting instances of a nested variable's value)
+
+# Dependencies
+
+dgen requires:
+
+* python3
+* the following non-core python3 packages:
+    * pyyaml
+    * pypandoc
+    * gitpython
+* pandoc
+* wkhtmltopdf for pdf reports
+* reveal.js for slide shows
