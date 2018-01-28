@@ -18,7 +18,7 @@ Each dgen project is a series of markdown files and a yaml config that says how 
 
 ## Project config
 
-The project should have its own config.yaml, which will reference one of more documents (in an optional document_set). The documents will have a name (which is used to name the final filenames and directories) and contents, which will be stitched together in the order they appear in the config. There are a number of other config items that can be used to drive the pandoc engine. In order to work with pandoc all yaml files must start with --- and end with ...
+The project should have its own config.yaml, which will reference one of more documents (in an optional document_set). The documents will have a name (which is used to name the final filenames and directories) and contents, which will be stitched together in the order they appear in the config. There are a number of other config items that can be used to drive the pandoc engine. In order to work with pandoc all yaml  files must start with --- and end with ...
 
 * template: this specifies a secondary config that is common to a set of documents (e.g. test reports or presentation slides). The template file should include everything needed to build a document in its folder. Additional HTML content (such as images for headers, footers or the title page) should be stored in a subdirectory called 'html'.
 * pandoc_html_config: this specifies additional config items sent to pandoc when generating content. It can include the following sub items:
@@ -26,6 +26,8 @@ The project should have its own config.yaml, which will reference one of more do
     * pandoc_options: a list of options to provide to pandoc. See the pandoc documentation for more info.
 * wkhtmltopdf_config: this supplies config items to send to wkhtmltopdf and consists of a single key:
     * wkhtmltopdf_options: arguments to send to wkhtmltopdf. See the documentation for further details.
+
+There is also a global_config.yaml with the dgen executables.
 
 ## Variable substitution
 
