@@ -1,43 +1,83 @@
 # dgen
-dgen (yet another report generator) is a text based report generation tool by pentesters for pentesers (and pirates).
+dgen (document generation for degenerates) is a text based document generation tool by pentesters for pentesters.
 
-## TODO
+Documents are written in markdown and converted to a format for presentation using pandoc. dgen supports:
 
-* Pick a new name because this one shits me
-* Write a check to ensure that variables haven't been left over after generating html
-  * include %{} and ${}
-* Add support for a section as keys rather than list, ie.
+* reports in html/pdf using wkhtmltopdf
+* presentations using reveal
 
+The design principals for dgen are:
+
+* leverage existing tools as much as possible (git, pandoc and so forth)
+* encourage people use their own text editors and work-flows with the platform
+* provide for modular reports and encourage re-use of IP
+
+# Setup
+
+Each dgen project is a series of markdown files and a yaml config that says how it stitches together.
+
+## Project config
+
+The project should have its own config.yaml, which will reference one of more documents (in an optional document_set). The documents will have a name (which is used to name the final filenames and directories) and contents, which will be stitched together in the order they appear in the config. There are a number of other config items that can be used to drive the pandoc engine. In order to work with pandoc all yaml files must start with --- and end with ...
+
+* template: this specifies a secondary config that is common to a set of documents (e.g. test reports or presentation slides). The template file should include everything needed to build a document in its folder. Additional HTML content (such as images for headers, footers or the title page) should be stored in a subdirectory called 'html'.
+* pandoc_html_config: this specifies additional config items sent to pandoc when generating content. It can include the following sub items:
+    * filters: a list of filters for pandoc. A filter to replace metavars has been included.
+    * pandoc_options: a list of options to provide to pandoc. See the pandoc documentation for more info.
+* wkhtmltopdf_config: this supplies config items to send to wkhtmltopdf and consists of a single key:
+    * wkhtmltopdf_options: arguments to send to wkhtmltopdf. See the documentation for further details.
+
+## Variable substitution
+
+dgen can perform variable substitution in both its configs and content. A variable is delimited by %{var}.
+
+dgen is smart enough to replace the following variables when preparing to generate a document:
+
+```python
+        symbols = {'bin_dir': project.bin_dir,
+                   'template_dir': project.template_dir,
+                   'html_dir': document.html_dir,
+                   'html_filename': document.html_filename,
+                   'pdf_filename': document.pdf_filename}
 ```
-sections:
-  cover:
-      files: 'cover'
-      html_options: 
-          - '--template=%{template_dir}/template-title.html'
-  toc: 
-      pdf_options:
-          - '--xsl-style-sheet toc.template.xsl'
-  section: 
-      files:
-          - 'exec.md'
-          - 'intro.md'
-          - 'finding1.md'
-          - 'finding2.md'
-          - 'appendix.md'
+
+Hopefully their meaning is self explanatory. You can also use standard symbols that reference your home folder or environment variables (e.g. ~, %HOME%, etc.).
+
+During generation dgen will loop through the entire document and substitute any variables found in metadata. This can be included either inside a dedicated yaml file, or inline with markdown content. dgen supports nested variables, e.g.
+
+```markdown
+---
+v_dflt_pw:
+    name: Default passwords
+    rating: High
+    num_treatments: 2
+    status: Untested
+...
+
+## %{v_dflt_pw.name}{.finding}
 ```
 
-* Add support to include config.yaml as an option for generation
-* rename 'sections' config item to 'document'
-* Add feature to allow the specification of a filename for each line item in a document.
-* Ensure the parser dies if it encounters an unknown element, and says why and where in the file
-* Bug when replacing numeric config item e.g.
+## Look and feel
 
-```
-    num_low = 4
-vs
-    num_low = "4"
+Formatting is done using html and css and is intended to be mostly configured through templates. Ensure you include the required css inside the html templates you use. You can enforce non-standard styles through use of div tags and css classes.
 
-    %{num_low}
-```
+## Change control
 
-* Bug when regenerating document, doesn't seem to update filename. Look at test plan for ColmanComms
+Each project can be put into its own git repository. 
+
+## Recommended structure
+
+* a git repository for each project
+* a git repository for standard markdown files (e.g. finding templates)
+* a git repository for your templates
+* a folder for dgen executables, which should be on your path
+
+## Future work
+
+* Enforce work-flows through git commits
+* Operations on a remote repository:
+    * copy a remote project
+    * list remote projects
+    * grep remote projects for text
+* Auto order markdown files based on variable values
+* Rules to allow operations on variables (e.g. counting instances of a nested variable's value)
