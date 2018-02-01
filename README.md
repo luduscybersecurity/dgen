@@ -18,9 +18,11 @@ Each dgen project is a series of markdown files and a yaml config that says how 
 
 ## Project config
 
-The project should have its own config.yaml, which will reference one of more documents (in an optional document_set). The documents will have a name (which is used to name the final filenames and directories) and contents, which will be stitched together in the order they appear in the config. There are a number of other config items that can be used to drive the pandoc engine. In order to work with pandoc all yaml  files must start with --- and end with ...
+The project should have its own config.yaml, which will reference one or more documents (in an document_set). The documents will have a name (which is used to name the final filenames and directories) and contents, (which will be stitched together in the order they appear in the config). There are a number of other config items that can be used to drive the pandoc engine. In order to work with pandoc all yaml files must start with --- and end with ...
 
-* template: this specifies a secondary config that is common to a set of documents (e.g. test reports or presentation slides). The template file should include everything needed to build a document in its folder. Additional HTML content (such as images for headers, footers or the title page) should be stored in a subdirectory called 'html'.
+* template: this specifies secondary config required for the presentation of documents. The template file should include everything needed to build a document in the folder that contains it. Additional HTML content (such as images for headers, footers or the title page) should be stored in a subdirectory called 'html'. Example uses for the template feature are:
+    * different templates for different letterheads. useful if you're whitelabling reports
+    * different templates for different kinds of documents (e.g. a pdf report vs a slide show)
 * pandoc_html_config: this specifies additional config items sent to pandoc when generating content. It can include the following sub items:
     * filters: a list of filters for pandoc. A filter to replace metavars has been included.
     * pandoc_options: a list of options to provide to pandoc. See the pandoc documentation for more info.
@@ -45,7 +47,7 @@ dgen is smart enough to replace the following variables when preparing to genera
 
 Hopefully their meaning is self explanatory. You can also use standard symbols that reference your home folder or environment variables (e.g. ~, %HOME%, etc.).
 
-During generation dgen will loop through the entire document and substitute any variables found in metadata. This can be included either inside a dedicated yaml file, or inline with markdown content. dgen supports nested variables, e.g.
+During generation dgen will loop through the entire document and substitute any variables found in yaml metadata. This can be included either inside a dedicated yaml file, or inline with markdown content. dgen supports nested variables, e.g.
 
 ```markdown
 ---
@@ -65,13 +67,15 @@ Formatting is done using html and css and is intended to be mostly configured th
 
 ## Change control
 
-Each project can be put into its own git repository. 
+Each project can be put into its own git repository.
 
-## Recommended structure
+### Recommended structure
 
 * a git repository for each project
-* a git repository for standard markdown files (e.g. finding templates)
-* a git repository for your templates
+* a git repository for standard markdown files (e.g. finding libraries, standard documents)
+* a git repository for your templates, e.g.
+    * dgen templates
+    * document templates
 * a folder for dgen executables, which should be on your path
 
 ## Future work
@@ -88,11 +92,10 @@ Each project can be put into its own git repository.
 
 dgen requires:
 
-* python3
-* the following non-core python3 packages:
+* python 2.7. It might work with python 3, I haven't tried.
+* the following non-core python packages:
     * pyyaml
     * pypandoc
-    * gitpython
 * pandoc
 * wkhtmltopdf for pdf reports
 * reveal.js for slide shows
