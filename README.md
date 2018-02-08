@@ -1,7 +1,3 @@
-<<<<<<< HEAD
-# yarg
-yarg (yet another report generator) is a text based report generation tool by pentesters for pentesers (and pirates).
-=======
 # dgen
 dgen (document generation for degenerates) is a text based document generation tool by pentesters for pentesters.
 
@@ -103,4 +99,3 @@ dgen requires:
 * pandoc
 * wkhtmltopdf for pdf reports
 * reveal.js for slide shows
->>>>>>> eb63ac59d83e920f4bc9b01406d880e6b31b6c0a
