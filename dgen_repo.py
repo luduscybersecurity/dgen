@@ -1,11 +1,7 @@
-import subprocess
-
 import dgen_utils
 
 def run_git_cmd(args):
-    cmd = ['git'] + args
-    # TODO: subprocess.call doesn't print to std_out/err, use pcall instead
-    subprocess.call(cmd)
+    dgen_utils.run_cmd('git', args)
 
 def remote_clone(args):
     pass

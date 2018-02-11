@@ -11,7 +11,7 @@ class dgenProject(object):
         self.__template = ''
         self.__template_dir = ''
         self.__revealjs_dir = ''
-        self.__metavars_config = ''
+        self.__metadata = []
 
     @property
     def document_set(self):
@@ -43,7 +43,7 @@ class dgenProject(object):
 
     @template.setter
     def template(self, value):
-        self.__template = dgen_utils.safe_path(value)
+        self.__template = value
 
     @property
     def revealjs_dir(self):
@@ -51,30 +51,26 @@ class dgenProject(object):
 
     @revealjs_dir.setter
     def revealjs_dir(self, value):
-        self.__revealjs_dir = dgen_utils.safe_path(value)
+        self.__revealjs_dir = value
 
-    '''
+
     @property
-    def metavars_config(self):
-        return self.__metavars_config
+    def metadata(self):
+        return self.__metadata
 
-    @metavars_config.setter
-    def metavars_config(self, value):
-        self.__metavars_config = dgen_utils.safe_path(value)
-    '''
+    @metadata.setter
+    def metadata(self, value):
+        self.__metadata = value
+
 
     @property
     def template_dir(self):
-        if self.__template_dir != '':
-            return self.__template_dir
         self.__template_dir = os.path.join(self.template, '..')
-        self.__template_dir = dgen_utils.safe_path(self.__template_dir)
         return self.__template_dir
 
     @property 
     def bin_dir(self):
         path = os.path.dirname(os.path.realpath(__file__))
-        path = dgen_utils.safe_path(path)
         return path
 
 class dgenDocument(object):
@@ -104,8 +100,7 @@ class dgenDocument(object):
 
     @property 
     def html_dir(self):
-        path = os.path.join(os.getcwd(), self.name+'-html')
-        return dgen_utils.safe_path(path)
+        return os.path.join(os.getcwd(), self.name+'-html')
 
     @property
     def html_filename(self):

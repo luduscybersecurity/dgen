@@ -5,8 +5,6 @@ import mimetypes
 import glob
 import re
 
-import pypandoc
-
 import dgen_utils
 import dgen_project
 
@@ -21,12 +19,13 @@ class dgenSymbolProcessor(object):
         return self.__symbols
 
     def initialise(self, project, document):
-        self.__symbols = {}
+        self.__symbols = {'html_filename': document.html_filename,
+                          'pdf_filename': document.pdf_filename}
         symbols = {'bin_dir': project.bin_dir,
                    'template_dir': project.template_dir,
-                   'html_dir': document.html_dir,
-                   'html_filename': document.html_filename,
-                   'pdf_filename': document.pdf_filename}
+                   'html_dir': document.html_dir}
+        for key, value in symbols.items():
+            symbols[key] = dgen_utils.expand_paths(value)
         self.__symbols.update(symbols)
 
     def replace_symbols_in_collection(self, collection, symbols=None):
@@ -37,20 +36,12 @@ class dgenSymbolProcessor(object):
     def replace_symbols_in_string(self, string, symbols=None):
         if symbols is None:
             symbols = self.symbols
-
-        pattern_bad = re.compile(r'.*?(\$\{.*?\}).*')
-        match_bad = pattern_bad.match(string)
-        if match_bad:
-            dgen_utils.log_warn("found wrong syntax for symbol:", match_bad.group(1))
-        pattern = re.compile(r'(.*?)%\{(.*?)\}(.*)')
-        match = pattern.match(string)
-        if match:
-            if match.group(2) not in symbols:
-                dgen_utils.log_warn("could not match symbol:", match.group(2))
-            else:
-                for key, value in symbols.items():
-                    if match.group(2) == key:
-                        string = match.group(1) + value + match.group(3)
+        matches_bad = re.finditer(r'(\${.*?})', string)
+        for bad_match in matches_bad:
+            dgen_utils.log_warn("found wrong syntax for symbol:", bad_match.group(0))
+        for key, value in symbols.items():
+            search_string = '%{' + key + '}'
+            string = re.sub(search_string, unicode(value), string)
         return string
 
     def replace_symbols_in_file(self, path, symbols=None):
@@ -94,12 +85,12 @@ class dgenPandocGenerator(dgenGenerator):
         '''
         Prepare the html_directory, copying it from the project's template
         '''
-
+        cwd = os.getcwd()
         # Delete the html folder if it exists
         dgen_utils.delete_folder(html_dir)
         # Copy the template html folder
-        cwd = os.getcwd()
-        src = os.path.join(cwd, self.project.template_dir, 'html')
+        src = os.path.join(self.project.template_dir, 'html')
+        src = dgen_utils.expand_paths(src)
         dgen_utils.copy_files(src, html_dir)
         # Copy other files to the HTML dir for referencing
         for item in [p for p in glob.glob('*') if not (p.endswith('.md') or
@@ -119,27 +110,26 @@ class dgenPandocGenerator(dgenGenerator):
         self.symbol_processor.initialise(self.project, document)
         # First prepare the html directory for generation
         self.prepare_html_dir(document.html_dir)
-        files = document.contents
+        files = self.symbol_processor.replace_symbols_in_collection(document.contents + self.project.metadata)
+        files = dgen_utils.expand_paths(files)
         output_file = os.path.join(document.html_dir, document.html_filename)
         # Build the document contents
-        contents = '\n'
+        contents = u'\n'
         for path in files:
             if os.path.isfile(path):
                 with  io.open(path, 'r', encoding='utf-8') as f:
-                    contents = contents + f.read() + '\n\n'
+                    filecontents = f.read()
+                    contents = contents + filecontents + u'\n\n'
             else:
                 dgen_utils.log_warn('file does not exist:', path)
         # Replace symbols in the content and arguments
         contents = self.symbol_processor.replace_symbols_in_string(contents)
         pandoc_options = self.project.pandoc_html_config.pandoc_options
         pandoc_options = self.symbol_processor.replace_symbols_in_collection(pandoc_options)
-        filters = self.project.pandoc_html_config.filters
-        filters = self.symbol_processor.replace_symbols_in_collection(filters)
-        # Generate the HTML
-        output = pypandoc.convert_text(contents, to_format, format='md',
-                                       outputfile=output_file, extra_args=pandoc_options,
-                                       filters=filters)
+        pandoc_options = ['--output=' + dgen_utils.expand_paths(output_file), '--from=markdown', '--to='+to_format] + pandoc_options
+        output = dgen_utils.run_cmd_with_io('pandoc', pandoc_options, stdindata=contents)
         assert output == ''
+
 
     def generate_documents(self, to_format):
         for doc in self.project.document_set:
@@ -155,15 +145,13 @@ class dgenPDFGenerator(dgenGenerator):
             self.generate_pdf(doc)
 
     def generate_pdf(self, document):
-        cmd = ['wkhtmltopdf']
-        cmd = cmd + self.project.wkhtmltopdf_config.wkhtmltopdf_options
-        cmd = cmd + [os.path.join(document.html_dir, document.html_filename)]
-        cmd = cmd + [os.path.join(os.getcwd(), document.pdf_filename)]
-        cmd = ' '.join(cmd)
+        cmd = 'wkhtmltopdf'
+        args = self.project.wkhtmltopdf_config.wkhtmltopdf_options
+        args = args + [os.path.join(document.html_dir, document.html_filename)]
+        args = args + [os.path.join(os.getcwd(), document.pdf_filename)]
         self.symbol_processor.initialise(self.project, document)
-        cmd = self.symbol_processor.replace_symbols_in_string(cmd)
-        dgen_utils.log_dbg('cmd:', cmd)
-        subprocess.call(cmd, shell=True, cwd=document.html_dir)
+        args = self.symbol_processor.replace_symbols_in_collection(args)
+        dgen_utils.run_cmd(cmd, args, cwd=document.html_dir)
 
 class dgenRevealGenerator(dgenPandocGenerator):
     def __init__(self):

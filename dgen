@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 
 '''
 Report generation for degenerates
@@ -23,7 +23,7 @@ class dgen(object):
         self.__project = None
         self.__global_config = os.path.dirname(os.path.realpath(__file__))
         self.__global_config = os.path.join(self.__global_config, 'global_config.yaml')
-        self.__global_config = dgen_utils.safe_path(self.__global_config)
+        self.__global_config = dgen_utils.expand_paths(self.__global_config)
         self.options = dgen_utils.load_config(self.__global_config)
         self.parse_options()
 

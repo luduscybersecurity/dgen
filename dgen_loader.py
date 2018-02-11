@@ -3,7 +3,6 @@ import os
 import io
 
 import glob
-import pypandoc
 
 import dgen_utils
 import dgen_project
@@ -32,6 +31,7 @@ class dgenLoader(object):
                  'pandoc_html_config',
                  'wkhtmltopdf_config',
                  'template',
+                 'metadata',
                  'revealjs_dir']
         self.no_unknown_in_conf(known, project_config)
         if 'document_set' in project_config:
@@ -44,6 +44,8 @@ class dgenLoader(object):
             self.project.wkhtmltopdf_config = self.parse_wkhtmltopdf_config(project_config['wkhtmltopdf_config'])
         if 'template' in project_config:
             self.project.template = self.parse_template(project_config['template'])
+        if 'metadata' in project_config:
+            self.project.metadata = self.parse_metadata(project_config['metadata'])
         if 'revealjs_dir' in project_config:
             self.project.revealjs_dir = self.parse_revealjs(project_config['revealjs_dir'])
         return self.project
@@ -108,8 +110,8 @@ class dgenLoader(object):
     def parse_revealjs(self, revealjs_conf):
         return self.parse_string(revealjs_conf)
 
-    def parse_metavars(self, metavars_config):
-        return self.parse_string(metavars_config)
+    def parse_metadata(self, parse_metadata_config):
+        return self.parse_list(parse_metadata_config)
 
     def parse_filters(self, filters_conf):
         return self.parse_list(filters_conf)
