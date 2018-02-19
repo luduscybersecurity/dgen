@@ -4,7 +4,7 @@ dgen (document generation for degenerates) is a text based document generation t
 Documents are written in markdown and converted to a format for presentation using pandoc. dgen supports:
 
 * reports in html/pdf using wkhtmltopdf
-* presentations using reveal
+* presentations using reveal.js
 
 The design principals for dgen are:
 
@@ -69,16 +69,32 @@ Formatting is done using html and css and is intended to be mostly configured th
 
 Each project can be put into its own git repository.
 
-### Recommended structure
+## Dependencies
+
+dgen requires:
+
+* python 2.7. It might work with python 3, but I haven't tried.
+* the following non-core python packages:
+    * pyyaml
+    * panflute
+* pandoc on your path
+* wkhtmltopdf on your path for pdf reports
+* a folder with reveal.js for slide shows
+
+## OS Support
+
+It should work on any OS but I've only tested MacOS and Linux (Fedora). No support for cygwin environments is planned.
+
+## Recommended folder structure
 
 * a git repository for each project
-* a git repository for standard markdown files (e.g. finding libraries, standard documents)
 * a git repository for your templates, e.g.
     * dgen templates
     * document templates
+    * finding libraries
 * a folder for dgen executables, which should be on your path
 
-## Future work
+# Future work
 
 * Enforce work-flows through git commits
 * Operations on a remote repository:
@@ -87,15 +103,3 @@ Each project can be put into its own git repository.
     * grep remote projects for text
 * Auto order markdown files based on variable values
 * Rules to allow operations on variables (e.g. counting instances of a nested variable's value)
-
-# Dependencies
-
-dgen requires:
-
-* python 2.7. It might work with python 3, I haven't tried.
-* the following non-core python packages:
-    * pyyaml
-    * pypandoc
-* pandoc
-* wkhtmltopdf for pdf reports
-* reveal.js for slide shows

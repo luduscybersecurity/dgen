@@ -111,7 +111,10 @@ def run_cmd_with_io(cmd, args, cwd=None, stdindata=None):
         (stdout, stderr) = p.communicate(stdindata if stdindata else None)
         result = stdout.decode('utf-8')
         if p.returncode != 0:
-            log_warn('terminated with exitcode %s\n---\n%s' % (p.returncode, stderr.decode('utf-8')))
+            log_warn('terminated with exitcode %s' % (p.returncode))
+        error_text = stderr.decode('utf-8')
+        if error_text != '':
+            log_warn('content from stderr\n%s' % (error_text))
     except OSError:
         log_err('died with exitcode %s during execution.' % (p.returncode))
     except UnicodeDecodeError:
