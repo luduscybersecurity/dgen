@@ -24,6 +24,8 @@ class dgenSymbolProcessor(object):
         symbols = {'bin_dir': project.bin_dir,
                    'template_dir': project.template_dir,
                    'html_dir': document.html_dir}
+        if project.templates_root != '':
+            symbols.update({'templates_root': project.templates_root})
         for key, value in symbols.items():
             symbols[key] = dgen_utils.expand_paths(value)
         self.__symbols.update(symbols)
@@ -70,11 +72,11 @@ class dgenGenerator(object):
     @project.setter
     def project(self, value):
         self.__project = value
-    
+
     @property
     def symbol_processor(self):
         return self.__symbol_processor
-        
+
 
 class dgenPandocGenerator(dgenGenerator):
 

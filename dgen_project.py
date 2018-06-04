@@ -3,13 +3,14 @@ import os
 import dgen_utils
 
 class dgenProject(object):
-    
+
     def __init__(self):
         self.__document_set = []
         self.__pandoc_html_config = dgenPandocHTMLConfig()
         self.__wkhtmltopdf_config = dgenWkHTMLtoPDFConfig()
         self.__template = ''
         self.__template_dir = ''
+        self.__templates_root = ''
         self.__revealjs_dir = ''
         self.__metadata = []
 
@@ -62,13 +63,20 @@ class dgenProject(object):
     def metadata(self, value):
         self.__metadata = value
 
+    @property
+    def templates_root(self):
+        return self.__templates_root
+
+    @templates_root.setter
+    def templates_root(self, value):
+        self.__templates_root = value
 
     @property
     def template_dir(self):
         self.__template_dir = os.path.join(self.template, '..')
         return self.__template_dir
 
-    @property 
+    @property
     def bin_dir(self):
         path = os.path.dirname(os.path.realpath(__file__))
         return path
@@ -95,10 +103,10 @@ class dgenDocument(object):
     def contents(self, value):
         if isinstance(value, str):
             self.__contents = self.__contents + [value]
-        elif isinstance(value, list):    
+        elif isinstance(value, list):
             self.__contents = self.__contents + value
 
-    @property 
+    @property
     def html_dir(self):
         return os.path.join(os.getcwd(), self.name+'-html')
 

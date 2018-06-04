@@ -31,6 +31,7 @@ class dgenLoader(object):
                  'pandoc_html_config',
                  'wkhtmltopdf_config',
                  'template',
+                 'template_root',
                  'metadata',
                  'revealjs_dir']
         self.no_unknown_in_conf(known, project_config)
@@ -42,6 +43,8 @@ class dgenLoader(object):
             self.project.pandoc_html_config = self.parse_pandoc_config(project_config[ 'pandoc_html_config'])
         if 'wkhtmltopdf_config' in project_config:
             self.project.wkhtmltopdf_config = self.parse_wkhtmltopdf_config(project_config['wkhtmltopdf_config'])
+        if 'templates_root' in project_config:
+            self.project.template_dir = self.parse_template_dir(project_config['templates_root'])
         if 'template' in project_config:
             self.project.template = self.parse_template(project_config['template'])
         if 'metadata' in project_config:
@@ -121,6 +124,9 @@ class dgenLoader(object):
 
     def parse_template(self, template_conf):
         return self.parse_string(template_conf)
+
+    def parse_templates_root(self, templates_root_conf):
+        return self.parse_string(templates_root_conf)
 
     def parse_list(self, list_conf):
         if isinstance(list_conf, str):
