@@ -28,7 +28,7 @@ def formatted_metavars(elem, document):
     # loop through all element classes and look for a matching metadata attribute
     for field in elem.classes:
         result = document.get_metadata(field)
-        # check the match is a dictionary and then loop through the elements content looking for 
+        # check the match is a dictionary and then loop through the elements content looking for
         # a key in the dictionary (case insensitive)
         if isinstance(result, OrderedDict):
             for string in elem.content:

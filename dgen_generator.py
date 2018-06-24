@@ -108,6 +108,15 @@ class dgenPandocGenerator(dgenGenerator):
                 # Symbol processor must be initialised previously
                 self.symbol_processor.replace_symbols_in_file(os.path.join(root, name))
 
+    def print_markdown_contents(self, contents):
+        output = ""
+        line_num = 1
+        lines = contents.splitlines()
+        for line in lines:
+            output = output + str(line_num) + ": " + line + "\n"
+            line_num = line_num + 1
+        dgen_utils.log_dbg(output)
+
     def generate_document(self, document, to_format):
         self.symbol_processor.initialise(self.project, document)
         # First prepare the html directory for generation
@@ -126,6 +135,7 @@ class dgenPandocGenerator(dgenGenerator):
                 dgen_utils.log_warn('file does not exist:', path)
         # Replace symbols in the content and arguments
         contents = self.symbol_processor.replace_symbols_in_string(contents)
+        self.print_markdown_contents(contents)
         pandoc_options = self.project.pandoc_html_config.pandoc_options
         pandoc_options = self.symbol_processor.replace_symbols_in_collection(pandoc_options)
         pandoc_options = ['--output=' + dgen_utils.expand_paths(output_file), '--from=markdown', '--to='+to_format] + pandoc_options
