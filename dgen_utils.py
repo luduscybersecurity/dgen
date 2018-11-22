@@ -17,11 +17,13 @@ def eprint(*args, **kwargs):
     '''
     print(*args, file=sys.stderr, **kwargs)
 
+
 def log_warn(*string, **kwargs):
     '''
     Log warning string to std error.
     '''
     eprint('WARNING:', sys._getframe(1).f_code.co_name + ':', *string, **kwargs)
+
 
 def log_err(*string, **kwargs):
     '''
@@ -30,7 +32,8 @@ def log_err(*string, **kwargs):
     eprint('ERROR:', sys._getframe(1).f_code.co_name + ':', *string, **kwargs)
     if DEBUG is True:
         traceback.print_stack()
-    sys.exit('exiting dgen')
+    sys.exit(1)
+
 
 def log_dbg(*string, **kwargs):
     '''
@@ -38,6 +41,7 @@ def log_dbg(*string, **kwargs):
     '''
     if DEBUG is True:
         eprint('DEBUG:', sys._getframe(1).f_code.co_name + ':', *string, **kwargs)
+
 
 def delete_folder(path):
     '''
@@ -49,6 +53,7 @@ def delete_folder(path):
             os.unlink(path)
         elif os.path.isdir(path):
             shutil.rmtree(path)
+
 
 def copy_files(src, dst):
     '''
@@ -69,6 +74,7 @@ def copy_files(src, dst):
     if not os.path.exists(dst):
         os.makedirs(dst)
 
+
 def copy_folders(src, dst):
     '''
     Copy all the folders (only) in path src to dst.
@@ -81,11 +87,13 @@ def copy_folders(src, dst):
         if os.path.isdir(copy_src):
             copy_files(copy_src, copy_dst)
 
+
 def __split_args(args):
     result = []
     for arg in args:
         result = result + str(arg).split(' ')
     return result
+
 
 def run_cmd_with_io(cmd, args, cwd=None, stdindata=None):
     if not isinstance(cmd, list):
@@ -121,6 +129,7 @@ def run_cmd_with_io(cmd, args, cwd=None, stdindata=None):
         log_dbg("eeeek! UnicodeDecodeError hope everything is okay :$")
     return result
 
+
 def run_cmd(cmd, args, cwd=None):
     if not isinstance(cmd, list):
         cmd = [cmd]
@@ -142,6 +151,7 @@ def __expand_path_str(path):
     path = os.path.abspath(path)
     return path
 
+
 def expand_paths(paths):
     if isinstance(paths, list):
         result = []
@@ -150,6 +160,7 @@ def expand_paths(paths):
     else:
         result = __expand_path_str(paths)
     return result
+
 
 def load_config(path):
     '''

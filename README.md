@@ -42,7 +42,7 @@ dgen is smart enough to replace the following variables when preparing to genera
                    'template_dir': project.template_dir,
                    'html_dir': document.html_dir,
                    'html_filename': document.html_filename,
-                   'pdf_filename': document.pdf_filename}
+                   'pdf_filename': project.pdf_filename}
 ```
 
 Hopefully their meaning is self explanatory. You can also use standard symbols that reference your home folder or environment variables (e.g. ~, %HOME%, etc.).

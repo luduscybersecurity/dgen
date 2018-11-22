@@ -5,18 +5,21 @@ import mimetypes
 import glob
 import re
 
+import dgen_model
 import dgen_utils
-import dgen_project
 
 class dgenSymbolProcessor(object):
+
     def __init__(self, project=None, document=None):
-        self.__symbols = {}
+        self.symbols = {}
         if project is not None and document is not None:
             self.initialise(project, document)
+
 
     @property
     def symbols(self):
         return self.__symbols
+
 
     def initialise(self, project, document):
         self.__symbols = {'html_filename': document.html_filename,
@@ -30,10 +33,12 @@ class dgenSymbolProcessor(object):
             symbols[key] = dgen_utils.expand_paths(value)
         self.__symbols.update(symbols)
 
+
     def replace_symbols_in_collection(self, collection, symbols=None):
         for i, string in enumerate(collection):
             collection[i] = self.replace_symbols_in_string(string)
         return collection
+
 
     def replace_symbols_in_string(self, string, symbols=None):
         if symbols is None:
@@ -45,6 +50,7 @@ class dgenSymbolProcessor(object):
             search_string = '%{' + key + '}'
             string = re.sub(search_string, unicode(value), string)
         return string
+
 
     def replace_symbols_in_file(self, path, symbols=None):
         mime_type, _ = mimetypes.guess_type(path)
@@ -59,19 +65,24 @@ class dgenSymbolProcessor(object):
                     fpw.write(contents)
                     fpw.close()
 
+
 class dgenGenerator(object):
 
+
     def __init__(self):
-        self.__project = dgen_project.dgenProject()
-        self.__symbol_processor = dgenSymbolProcessor()
+        self.project = dgen_project.dgenProject()
+        self.symbol_processor = dgenSymbolProcessor()
+
 
     @property
     def project(self):
         return self.__project
 
+
     @project.setter
     def project(self, value):
         self.__project = value
+
 
     @property
     def symbol_processor(self):
@@ -80,8 +91,10 @@ class dgenGenerator(object):
 
 class dgenPandocGenerator(dgenGenerator):
 
+
     def __init__(self):
         dgenGenerator.__init__(self)
+
 
     def prepare_html_dir(self, html_dir):
         '''
@@ -108,6 +121,7 @@ class dgenPandocGenerator(dgenGenerator):
                 # Symbol processor must be initialised previously
                 self.symbol_processor.replace_symbols_in_file(os.path.join(root, name))
 
+
     def print_markdown_contents(self, contents):
         output = ""
         line_num = 1
@@ -116,6 +130,7 @@ class dgenPandocGenerator(dgenGenerator):
             output = output + str(line_num) + ": " + line + "\n"
             line_num = line_num + 1
         dgen_utils.log_dbg(output)
+
 
     def generate_document(self, document, to_format):
         self.symbol_processor.initialise(self.project, document)
@@ -147,33 +162,43 @@ class dgenPandocGenerator(dgenGenerator):
         for doc in self.project.document_set:
             self.generate_document(doc, to_format)
 
+
 class dgenPDFGenerator(dgenGenerator):
+
 
     def __init__(self):
         dgenGenerator.__init__(self)
+
 
     def generate_pdfs(self):
         for doc in self.project.document_set:
             self.generate_pdf(doc)
 
+
     def generate_pdf(self, document):
         cmd = 'wkhtmltopdf'
         args = self.project.wkhtmltopdf_config.wkhtmltopdf_options
         args = args + [os.path.join(document.html_dir, document.html_filename)]
-        args = args + [os.path.join(os.getcwd(), document.pdf_filename)]
+        args = args + [os.path.join(os.getcwd(), project.pdf_filename)]
         self.symbol_processor.initialise(self.project, document)
         args = self.symbol_processor.replace_symbols_in_collection(args)
         dgen_utils.run_cmd(cmd, args, cwd=document.html_dir)
 
+
 class dgenRevealGenerator(dgenPandocGenerator):
+
+
     def __init__(self):
         dgenPandocGenerator.__init__(self)
+
 
     def copy_reveal(self):
         if self.project.revealjs_dir is not '':
             for doc in self.project.document_set:
                 dgen_utils.copy_files(doc.html_dir, self.project.revealjs_dir)
 
+
     def generate_documents(self, to_format):
         dgenPandocGenerator.generate_documents(self, to_format)
         self.copy_reveal()
+

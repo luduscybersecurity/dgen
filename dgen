@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python -B
 
 '''
 Report generation for degenerates
@@ -7,7 +7,7 @@ import argparse
 import os
 
 import dgen_generator
-import dgen_loader
+import dgen_config_parser
 import dgen_repo
 import dgen_utils
 
@@ -20,46 +20,68 @@ class dgen(object):
         '''
         Run dgen
         '''
-        self.__project = None
-        self.__global_config = os.path.dirname(os.path.realpath(__file__))
-        self.__global_config = os.path.join(self.__global_config, 'global_config.yaml')
-        self.__global_config = dgen_utils.expand_paths(self.__global_config)
-        self.options = dgen_utils.load_config(self.__global_config)
+        self.project = None
+        global_config_file = os.path.dirname(os.path.realpath(__file__))
+        global_config_file = os.path.join(global_config_file, 'global_config.yaml')
+        global_config_file = dgen_utils.expand_paths(global_config_file)
+        self.global_config = dgen_utils.load_config(global_config_file)
         self.parse_options()
+
 
     @property
     def project(self):
         return self.__project
 
+
     @project.setter
     def project(self, value):
         self.__project = value
+
 
     @property
     def local_config(self):
         return self.__local_config
 
+
     @local_config.setter
     def local_config(self, value):
         self.__local_config = value
 
+
+    @property
+    def global_config(self):
+        return self.__global_config
+
+
+    @global_config.setter
+    def global_config(self, value):
+        self.__global_config = value
+
+
     def remote_list(self, args):
         dgen_repo.remote_list()
+
 
     def remote_clone(self, args):
         dgen_repo.remote_clone(args.args)
 
+
     def run_git(self, args):
         dgen_repo.run_git_cmd(args.args)
 
-    def load_project(self, local_config_file):
-        loader = dgen_loader.dgenLoader()
-        local_config = dgen_utils.load_config(local_config_file)
-        loader.parse_project(local_config)
-        template_config = dgen_utils.load_config(loader.project.template)
-        loader.parse_project(template_config)
 
-        return loader.project
+    def load_project(self, project_config_file):
+        parser = dgen_config_parser.dgenConfigParser()
+        project_config = dgen_utils.load_config(project_config_file)
+        config = {}
+        config.update(self.global_config)
+        config.update(project_config)
+        project = parser.parse_project(config)
+        #template_config = dgen_utils.load_config(loader.project.template)
+        #loader.parse_project(template_config)
+
+        return project
+
 
     def generate_html(self, args):
         self.project = self.load_project(args.config)
@@ -67,17 +89,20 @@ class dgen(object):
         html_generator.project = self.project
         html_generator.generate_documents('html')
 
+
     def generate_pdf(self, args):
         self.generate_html(args)
         pdf_generator = dgen_generator.dgenPDFGenerator()
         pdf_generator.project = self.project
         pdf_generator.generate_pdfs()
 
+
     def generate_reveal_js(self, args):
         self.project = self.load_project(args.config)
         reveal_generator = dgen_generator.dgenRevealGenerator()
         reveal_generator.project = self.project
         reveal_generator.generate_documents('revealjs')
+
 
     def add_gen_options(self, subparser):
         '''
@@ -99,15 +124,17 @@ class dgen(object):
                                 help='write html output to the supplied directory (default html)')
         parser_pdf.set_defaults(func=self.generate_pdf)
         
-        parser_reveal = subparser_gen.add_parser('revealjs', #aliases=['reveal', 'rev'],
+        parser_reveal = subparser_gen.add_parser('revealjs',
                                                 help='Generate a reveal.js presentation')
         parser_reveal.set_defaults(func=self.generate_reveal_js)
+
 
     def add_git_options(self, subparser):
         parser_repo = subparser.add_parser('git',
                                            help='run git command')
         parser_repo.add_argument('args', nargs=argparse.REMAINDER)
         parser_repo.set_defaults(func=self.run_git)
+
 
     def add_workflow_options(self, subparser):
         parser_workflow = subparser.add_parser('mark',
@@ -118,6 +145,7 @@ class dgen(object):
         parser_workflow.add_argument('-m', '--message', action='store',
                                      help='Message documenting workflow change.')
 
+
     def add_switches(self, parser):
         parser.add_argument('-c', '--config', '--conf', 
                             action='store', default='config.yaml',
@@ -125,6 +153,7 @@ class dgen(object):
         parser.add_argument('-d', '--debug',
                             action='store_true', default=False,
                             help='enable debugging output')
+
 
     def parse_options(self):
         '''
@@ -142,10 +171,14 @@ class dgen(object):
         if hasattr(args, 'debug'):
             dgen_utils.DEBUG=args.debug
         if hasattr(args, 'func'):
+            # TODO: this isn't obvious what it does. Can be be written better?
+            # Call one of generate_html, generate_pdf, generate_revealjs depending 
+            # on the supplied arguments
             args.func(args)
         else:
             parser.print_usage()
             parser.print_help()
+
 
 if __name__ == '__main__':
     dgen()
