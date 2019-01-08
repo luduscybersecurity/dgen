@@ -1,7 +1,5 @@
 # dgen
 
-TODO: this needs an update.
-
 dgen (document generation for degenerates) is a text based document generation tool by pentesters for pentesters.
 
 Documents are written in markdown and converted to a format for presentation using pandoc. dgen supports:
@@ -18,6 +16,8 @@ The design principals for dgen are:
 # Setup
 
 Each dgen project is a series of markdown files and yaml configs that say how the markdown stitches together.
+
+Some example projects have been supplied in the folder dgen-examples. Feel free to use them as a guide.
 
 ## Global config
 
