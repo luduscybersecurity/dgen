@@ -10,6 +10,7 @@ import io
 import yaml
 
 DEBUG=False
+REFRESH_TEMPLATE=False
 
 def eprint(*args, **kwargs):
     '''
@@ -122,7 +123,7 @@ def run_cmd_with_io(cmd, args, cwd=None, stdindata=None):
             log_warn('terminated with exitcode %s' % (p.returncode))
         error_text = stderr.decode('utf-8')
         if error_text != '':
-            log_warn('content from stderr\n%s' % (error_text))
+            log_warn('content from stderr for cmd: %s\n%s' % (' '.join(cmd + args), error_text))
     except OSError:
         log_err('died with exitcode %s during execution.' % (p.returncode))
     except UnicodeDecodeError:
@@ -166,8 +167,11 @@ def load_config(path):
     '''
     Load the yaml config at path
     '''
-    path = expand_paths(path)
-    config = {}
-    with open(path, 'r') as fpr:
-        config = yaml.safe_load(fpr)
+    try:
+        path = expand_paths(path)
+        config = {}
+        with open(path, 'r') as fpr:
+            config = yaml.safe_load(fpr)
+    except:
+        log_err('can not load config: %s' % (path))
     return config

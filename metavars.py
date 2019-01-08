@@ -9,10 +9,15 @@ value.
 import re, codecs, sys
 from collections import OrderedDict
 
+# disable annoying warning from click caused by panflute. An upgrade to python 3 might fix
+import click
+click.disable_unicode_literals_warning = True
 import panflute
 from panflute import Span, Str, MetaInlines
 
+
 import dgen_utils
+
 
 PATTERN = None
 PATTERN_BAD = None
@@ -48,10 +53,13 @@ def metavars(elem, document):
     for match in PATTERN.finditer(elem.text):
         field = match.group(2)
         result = document.get_metadata(field, None)
-        if type(result) == MetaInlines:
-            result = Span(*result.content, classes=['interpolated'], attributes={'field': field})
-            return Span(Str(match.group(1)), result, Str(match.group(3)), classes=['interpolated'])
-        elif isinstance(result, unicode):
+        # TODO: dead code. remove after testing
+        #if type(result) == MetaInlines:
+        #    dgen_utils.log_warn('hitting here. shouldn\'t happen?')
+        #    result = Span(*result.content, classes=['interpolated'], attributes={'field': field})
+        #    return Span(Str(match.group(1)), result, Str(match.group(3)), classes=['interpolated'])
+        #el
+        if isinstance(result, unicode):
             return Str(match.group(1) + result + match.group(3))
         dgen_utils.log_warn("metavar not found in document:", field)
     match_bad = PATTERN_BAD.match(elem.text)

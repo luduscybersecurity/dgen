@@ -12,8 +12,7 @@
             "stopOnEntry": false,
             "pythonPath": "${config:python.pythonPath}",
             "program": "${workspaceFolder}/dgen",
-            //"cwd": "${workspaceFolder}",
-            "cwd": "/home/gee/code/dgen-examples/example-report",
+            "cwd": "${workspaceFolder}/dgen-examples/example-slideshow",
             "env": {},
             "envFile": "${workspaceFolder}/.env",
             "debugOptions": [
@@ -22,7 +21,7 @@
             "args": [
                 "-d",
                 "gen",
-                "pdf"
+                "revealjs"
             ]
         },
         {
@@ -31,7 +30,7 @@
             "request": "attach",
             "localRoot": "${workspaceFolder}",
             "remoteRoot": "${workspaceFolder}",
-            "port": 3000,
+            "port": 5678,
             "secret": "my_secret",
             "host": "localhost"
         },

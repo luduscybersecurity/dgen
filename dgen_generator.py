@@ -8,30 +8,31 @@ import re
 import dgen_model
 import dgen_utils
 
+from dgen_model import dgen_project
+
 class dgenSymbolProcessor(object):
 
     def __init__(self, project=None, document=None):
         self.symbols = {}
-        if project is not None and document is not None:
-            self.initialise(project, document)
+        if project is not None:
+            self.initialise(project)
 
 
     @property
     def symbols(self):
         return self.__symbols
 
+    @symbols.setter
+    def symbols(self, val):
+        self.__symbols = val
 
-    def initialise(self, project, document):
-        self.__symbols = {'html_filename': document.html_filename,
-                          'pdf_filename': document.pdf_filename}
-        symbols = {'bin_dir': project.bin_dir,
-                   'template_dir': project.template_dir,
-                   'html_dir': document.html_dir}
-        if project.templates_root != '':
-            symbols.update({'templates_root': project.templates_root})
-        for key, value in symbols.items():
-            symbols[key] = dgen_utils.expand_paths(value)
-        self.__symbols.update(symbols)
+    def initialise(self, project):
+        self.symbols = {'pdf_filename': project.pdf_filename,
+                          'bin_dir': project.bin_dir,
+                          'template_dir': project.local_template_dir,
+                          'html_dir': project.html_dir}
+        for key, value in self.symbols.items():
+            self.symbols[key] = dgen_utils.expand_paths(value)
 
 
     def replace_symbols_in_collection(self, collection, symbols=None):
@@ -69,9 +70,9 @@ class dgenSymbolProcessor(object):
 class dgenGenerator(object):
 
 
-    def __init__(self):
-        self.project = dgen_project.dgenProject()
-        self.symbol_processor = dgenSymbolProcessor()
+    def __init__(self, project=None):
+        self.project = project
+        self.symbol_processor = dgenSymbolProcessor(project)
 
 
     @property
@@ -89,11 +90,16 @@ class dgenGenerator(object):
         return self.__symbol_processor
 
 
+    @symbol_processor.setter
+    def symbol_processor(self, value):
+        self.__symbol_processor = value
+
+
 class dgenPandocGenerator(dgenGenerator):
 
 
-    def __init__(self):
-        dgenGenerator.__init__(self)
+    def __init__(self, project=None):
+        dgenGenerator.__init__(self, project)
 
 
     def prepare_html_dir(self, html_dir):
@@ -104,6 +110,7 @@ class dgenPandocGenerator(dgenGenerator):
         # Delete the html folder if it exists
         dgen_utils.delete_folder(html_dir)
         # Copy the template html folder
+        
         src = os.path.join(self.project.template_dir, 'html')
         src = dgen_utils.expand_paths(src)
         dgen_utils.copy_files(src, html_dir)
@@ -132,13 +139,11 @@ class dgenPandocGenerator(dgenGenerator):
         dgen_utils.log_dbg(output)
 
 
-    def generate_document(self, document, to_format):
-        self.symbol_processor.initialise(self.project, document)
-        # First prepare the html directory for generation
-        self.prepare_html_dir(document.html_dir)
-        files = self.symbol_processor.replace_symbols_in_collection(document.contents + self.project.metadata)
+    def generate_page(self, document, to_format):
+        files = self.project.template_conf.metadata + document.template_conf.metadata + document.contents
+        files = self.symbol_processor.replace_symbols_in_collection(files)
         files = dgen_utils.expand_paths(files)
-        output_file = os.path.join(document.html_dir, document.html_filename)
+        output_file = os.path.join(self.project.html_dir, document.html_filename)
         # Build the document contents
         contents = u'\n'
         for path in files:
@@ -151,54 +156,54 @@ class dgenPandocGenerator(dgenGenerator):
         # Replace symbols in the content and arguments
         contents = self.symbol_processor.replace_symbols_in_string(contents)
         self.print_markdown_contents(contents)
-        pandoc_options = self.project.pandoc_html_config.pandoc_options
+        pandoc_options = self.project.template_conf.pandoc_options
+        pandoc_options = document.template_conf.pandoc_options + pandoc_options
         pandoc_options = self.symbol_processor.replace_symbols_in_collection(pandoc_options)
         pandoc_options = ['--output=' + dgen_utils.expand_paths(output_file), '--from=markdown', '--to='+to_format] + pandoc_options
         output = dgen_utils.run_cmd_with_io('pandoc', pandoc_options, stdindata=contents)
         assert output == ''
 
 
-    def generate_documents(self, to_format):
-        for doc in self.project.document_set:
-            self.generate_document(doc, to_format)
+    def generate_pages(self, to_format):
+        self.prepare_html_dir(self.project.html_dir)
+        for page in self.project.document.sections:
+            if page.section_type is not 'toc':
+                self.generate_page(page, to_format)
 
 
 class dgenPDFGenerator(dgenGenerator):
 
 
-    def __init__(self):
-        dgenGenerator.__init__(self)
+    def __init__(self, project):
+        dgenGenerator.__init__(self, project)
 
-
-    def generate_pdfs(self):
-        for doc in self.project.document_set:
-            self.generate_pdf(doc)
-
-
-    def generate_pdf(self, document):
+    def generate_pdf(self):
         cmd = 'wkhtmltopdf'
-        args = self.project.wkhtmltopdf_config.wkhtmltopdf_options
-        args = args + [os.path.join(document.html_dir, document.html_filename)]
-        args = args + [os.path.join(os.getcwd(), project.pdf_filename)]
-        self.symbol_processor.initialise(self.project, document)
+        args = self.project.template_conf.wkhtmltopdf_options
+        for section in self.project.document.sections:
+            args += [section.section_type]
+            if section.section_type is not 'toc':
+                args += [os.path.join(self.project.html_dir, section.html_filename)]
+            args += section.template_conf.wkhtmltopdf_options
+        args = args + [os.path.join(os.getcwd(), self.project.pdf_filename)]
         args = self.symbol_processor.replace_symbols_in_collection(args)
-        dgen_utils.run_cmd(cmd, args, cwd=document.html_dir)
+        dgen_utils.run_cmd(cmd, args, cwd=self.project.html_dir)
 
 
 class dgenRevealGenerator(dgenPandocGenerator):
 
 
-    def __init__(self):
-        dgenPandocGenerator.__init__(self)
+    def __init__(self, project=None):
+        dgenPandocGenerator.__init__(self, project)
 
 
     def copy_reveal(self):
-        if self.project.revealjs_dir is not '':
-            for doc in self.project.document_set:
-                dgen_utils.copy_files(doc.html_dir, self.project.revealjs_dir)
+        if self.project.revealjs_dir is '':
+            dgen_utils.log_err('config item revealjs_dir not set for project')
+        dgen_utils.copy_files(self.project.html_dir, self.project.revealjs_dir)
 
 
-    def generate_documents(self, to_format):
-        dgenPandocGenerator.generate_documents(self, to_format)
+    def generate_pages(self, to_format):
+        dgenPandocGenerator.generate_pages(self, to_format)
         self.copy_reveal()
 

@@ -1,4 +1,7 @@
 # dgen
+
+TODO: this needs an update.
+
 dgen (document generation for degenerates) is a text based document generation tool by pentesters for pentesters.
 
 Documents are written in markdown and converted to a format for presentation using pandoc. dgen supports:
@@ -9,45 +12,79 @@ Documents are written in markdown and converted to a format for presentation usi
 The design principals for dgen are:
 
 * leverage existing tools as much as possible (git, pandoc and so forth)
-* encourage people use their own text editors and work-flows with the platform
+* encourage people to use their own text editors and work-flows with the platform
 * provide for modular reports and encourage re-use of IP
 
 # Setup
 
-Each dgen project is a series of markdown files and a yaml config that says how it stitches together.
+Each dgen project is a series of markdown files and yaml configs that say how the markdown stitches together.
+
+## Global config
+
+A global_config.yaml file is loaded from the same directory as dgen. It can be used to load options that will persist across all projects. Any attribute in the project config can be loaded into the global config, with the project config taking precedence.
 
 ## Project config
 
-The project should have its own config.yaml, which will reference one or more documents (in an document_set). The documents will have a name (which is used to name the final filenames and directories) and contents, (which will be stitched together in the order they appear in the config). There are a number of other config items that can be used to drive the pandoc engine. In order to work with pandoc all yaml files must start with --- and end with ...
+Each project is self contained within a folder, and may reference templates located in another folder elsewhere on the filesystem. The project should have its own config.yaml in the base of the project directory which can include:
 
-* template: this specifies secondary config required for the presentation of documents. The template file should include everything needed to build a document in the folder that contains it. Additional HTML content (such as images for headers, footers or the title page) should be stored in a subdirectory called 'html'. Example uses for the template feature are:
+* document: defines the structure of the document (described below)
+* filename: the filename of generated documents (an extension is appended automatically)
+* template_root: a base folder that contains all dgen templates
+* template: the template to use (will be a folder found under the template_root). All material for the template must be contained in this folder.
+* template_conf: the project template configuration
+* revealjs_dir: the location of a reveal.js installation for serving slideshows over HTTP
+
+The document item is a yaml list (of sections) that can be either a:
+
+* cover page (title page), toc (table of contents), or page (main content): each type is supplied it's corresponding object type to wkhtmltopdf (see the man page).
+* each section has a name that determines it's filename when it is converted into html
+* each section has a list of contents that contain the markdown that section. In order to work with pandoc all yaml files and inline metadata must start with --- and end with ...
+
+The document item may also define it's own template_conf, which is identical to the structure of the main template_conf and takes precedence.
+
+## Templates
+
+Templates specifies secondary config required for the presentation of documents. Each template is structed as a collection of template configurations HTML and CSS needed to build a document. Additional HTML content (such as images for headers, footers or the title page) must be stored in a subdirectory called 'html' so they can be easily referenced during the HTML generation process. Example uses for the template feature are:
     * different templates for different letterheads. useful if you're whitelabling reports
     * different templates for different kinds of documents (e.g. a pdf report vs a slide show)
-* pandoc_html_config: this specifies additional config items sent to pandoc when generating content. It can include the following sub items:
-    * filters: a list of filters for pandoc. A filter to replace metavars has been included.
-    * pandoc_options: a list of options to provide to pandoc. See the pandoc documentation for more info.
-* wkhtmltopdf_config: this supplies config items to send to wkhtmltopdf and consists of a single key:
-    * wkhtmltopdf_options: arguments to send to wkhtmltopdf. See the documentation for further details.
 
-There is also a global_config.yaml with the dgen executables.
+Templates can have the following attributes:
+
+* pandoc_options: a list of options to provide to pandoc. See the pandoc man page for more info.
+* wkhtmltopdf_options: arguments to send to wkhtmltopdf. See the wkhtmltopdf man page for further details.
+* metadata: a list of files to add onto the contents of a page during HTML generation (typically just yaml metadata)
+
+# Generating a document
+
+When generating a document the following activities happen:
+
+* the project is initialised and all configurations loaded.
+* dgen stores a copy of the specified template in the project folder if it doesn't already exist, or a refresh is specified on the command line
+* dgen uses the local copy of the template to construct a folder in which the HTML documentation is generated. if the local HTML folder exists, it is deleted prior to copy
+* all files that aren't known by pandoc (.md, yaml, local template) are copied into the local HTML directory
+* for each document section, a separate pandoc command is run, creating a separate html file inside the local HTML directory
+* variable substitution inside command options and the local HTML folder occurs at this point
+* the default template and example documents includes some pandoc filters to do variable substitution and enforce pagebreaks. they use the panflute python library, which is easy to use. 
+* when generating a pdf, dgen prepares the command for wkhtmltopdf. variable substitution inside the command happens at this point
+* when generating a slideshow, dgen copies the generated html to the configured revealjs_dir. reveal_js can be run from the destination folder
+
 
 ## Variable substitution
 
-dgen can perform variable substitution in both its configs and content. A variable is delimited by %{var}.
+dgen can perform variable substitution in both its configs and content. A variable is delimited by %{var}. Structured variables are supported.
 
 dgen is smart enough to replace the following variables when preparing to generate a document:
 
 ```python
-        symbols = {'bin_dir': project.bin_dir,
-                   'template_dir': project.template_dir,
-                   'html_dir': document.html_dir,
-                   'html_filename': document.html_filename,
-                   'pdf_filename': project.pdf_filename}
+                symbols = {'pdf_filename': project.pdf_filename, # the defined filename with a .pdf extension
+                          'bin_dir': project.bin_dir, # the directory of the dgen script
+                          'template_dir': project.local_template_dir, # the directory of the projects local template
+                          'html_dir': project.html_dir} # the directory of the project's local html directory
 ```
 
-Hopefully their meaning is self explanatory. You can also use standard symbols that reference your home folder or environment variables (e.g. ~, %HOME%, etc.).
+Standard symbols that reference the home folder or environment variables are also supported (e.g. ~, %HOME%, etc.).
 
-During generation dgen will loop through the entire document and substitute any variables found in yaml metadata. This can be included either inside a dedicated yaml file, or inline with markdown content. dgen supports nested variables, e.g.
+During HTML generation dgen will loop through the entire document and substitute any variables found in yaml metadata. This can be included either inside a dedicated yaml file, or inline with markdown content. dgen supports nested variables, e.g.
 
 ```markdown
 ---
@@ -61,29 +98,40 @@ v_dflt_pw:
 ## %{v_dflt_pw.name}{.finding}
 ```
 
+## Page breaks
+
+dgen will attempt to force a pagebreak when generating a pdf where-ever it sees the string `%pagebreak` in it's own paragraph:
+
+```
+
+%pagebreak
+
+```
+
+
 ## Look and feel
 
-Formatting is done using html and css and is intended to be mostly configured through templates. Ensure you include the required css inside the html templates you use. You can enforce non-standard styles through use of div tags and css classes.
+Formatting is done using html and css and is intended to be mostly configured through templates. Ensure you include the required css inside the html templates you use. You can enforce non-standard styles through use of div tags and css classes in the markdown content, or you can write your own pandoc filters.
 
 ## Change control
 
-Each project can be put into its own git repository.
+Each project can be put into its own git repository. This way you'll get full change history and colaboration is easier.
 
 ## Dependencies
 
 dgen requires:
 
-* python 2.7. It might work with python 3, but I haven't tried.
+* python 2.7. 
 * the following non-core python packages:
     * pyyaml
     * panflute
 * pandoc on your path
-* wkhtmltopdf on your path for pdf reports
+* wkhtmltopdf on your path for pdf reports (it must be the qt version to generate a table of contents)
 * a folder with reveal.js for slide shows
 
 ## OS Support
 
-It should work on any OS but I've only tested MacOS and Linux (Fedora). No support for cygwin environments is planned.
+It should work on any OS but I've only tested MacOS and Linux (Fedora).
 
 ## Recommended folder structure
 
@@ -96,10 +144,4 @@ It should work on any OS but I've only tested MacOS and Linux (Fedora). No suppo
 
 # Future work
 
-* Enforce work-flows through git commits
-* Operations on a remote repository:
-    * copy a remote project
-    * list remote projects
-    * grep remote projects for text
-* Auto order markdown files based on variable values
-* Rules to allow operations on variables (e.g. counting instances of a nested variable's value)
+* python3 support

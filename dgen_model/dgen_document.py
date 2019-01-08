@@ -22,8 +22,8 @@ class dgenDocument(object):
 
 
     def add_section(self, value):
-        if isinstance(value, str):
-            self.__sections = self.__sections + [value]
-        elif isinstance(value, list):
+        if isinstance(value, list):
             self.__sections = self.__sections + value
+        else:
+            self.__sections = self.__sections + [value]
 

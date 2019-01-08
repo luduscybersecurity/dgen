@@ -1,1 +1,5 @@
 *.pyc
+.vscode/**
+__pycache__/**
+dgen-examples/example-report/default
+dgen-examples/example-slide-show/slide-show

@@ -1,0 +1,11 @@
+---
+# symbols:
+#   bin_dir: the dir dgen lives in
+#   template_dir: the dir this template lives in
+#   html_dir: changes for each document = document.name + '-html'
+
+wkhtmltopdf_options: 
+    - '--xsl-style-sheet %{html_dir}/toc.template.xsl'
+    
+...
+

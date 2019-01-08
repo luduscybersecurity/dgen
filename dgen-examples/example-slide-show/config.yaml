@@ -1,0 +1,25 @@
+---
+document:
+    - page:
+        name: index
+        contents: 
+            - intro.md
+            - aboutme.md
+            - outline.md
+            - metadata.yaml
+    - page:
+        name: day1
+        contents: 
+            - topic_xyz.md
+            - metadata.yaml
+    - page:
+        name: day2
+        contents:
+            - topic_abc.md
+            - metadata.yaml
+filename: presentation
+template: slide-show
+template_conf: template_config.yaml
+revealjs_dir: '~/code/reveal.js'
+
+...

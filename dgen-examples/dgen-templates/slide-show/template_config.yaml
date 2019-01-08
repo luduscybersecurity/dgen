@@ -1,0 +1,12 @@
+
+---
+pandoc_options: 
+    - '--standalone' 
+    - '--template=%{template_dir}/template.html'
+    - '--slide-level=2'
+    - '--filter=%{bin_dir}/metavars.py'
+
+metadata:
+    - '%{template_dir}/template_metadata.yaml'
+
+...

@@ -1,0 +1,29 @@
+document:
+    - cover:
+        name: title_page
+        template_conf: 'title_config.yaml'
+        contents:
+            - 'metadata.yaml'
+    - page:
+        name: document_information
+        contents: 
+            - docinfo.md
+            - metadata.yaml
+        template_conf: 'body_config.yaml'
+    - toc:
+        name: table_of_contents
+        template_conf: 'toc_config.yaml'
+    - page:
+        name: report
+        contents: 
+            - 'exec.md'
+            - 'intro.md'
+            - 'finding1.md'
+            - 'finding2.md'
+            - 'appendix.md'
+            - 'metadata.yaml'
+        template_conf: 'body_config.yaml'
+filename: 'pentest_report'
+template: 'default'
+template_conf: 'document_config.yaml'
+

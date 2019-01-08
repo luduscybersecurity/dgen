@@ -9,7 +9,7 @@ class dgenSection(object):
     def __init__(self):
         self.name = ''
         self.contents = []
-        self.template = dgen_template.dgenTemplate()
+        self.template_conf = dgen_template.dgenTemplateConfig()
         self.section_type = ''
 
 
@@ -58,18 +58,13 @@ class dgenSection(object):
 
 
     @property
-    def template(self):
-        return self.__template
+    def template_conf(self):
+        return self.__template_conf
 
 
-    @template.setter
-    def template(self, value):
-        self.__template = value
-
-
-    @property
-    def html_dir(self):
-        return os.path.join(os.getcwd(), self.name+'-html')
+    @template_conf.setter
+    def template_conf(self, value):
+        self.__template_conf = value
 
 
     @property

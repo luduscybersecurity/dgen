@@ -1,0 +1,14 @@
+
+---
+# A list of variables that will be substituted as span HTML elements to facilitate formatting of metadata. 
+# First value is the variable string to match when parsing e.g. %{rating}
+# Second is a list of accepted values for each variable string with the key being the string (converted to 
+# lowercase), the value will be used as a class attribute for the generated span tag.
+#       e.g. <span class=high">High</span>
+rating:
+    urgent: urg
+    high: high
+    medium: med
+    low: low
+    optional: opt
+...

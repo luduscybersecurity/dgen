@@ -1,0 +1,25 @@
+---
+# symbols:
+#   bin_dir: the dir dgen lives in
+#   template_dir: the dir this template lives in
+#   html_dir: changes for each document = document.name + '-html'
+
+pandoc_options: 
+    - '--standalone' 
+    - '--css=css/template.css'
+    - '--filter=%{bin_dir}/metavars.py'
+    - '--filter=%{bin_dir}/pagebreak.py'
+
+wkhtmltopdf_options: 
+    - '--page-size A4'
+    - '--margin-top 2.2cm'
+    - '--margin-bottom 2.2cm'
+    - '--header-html "file://%{html_dir}/header.html?classifcation=Commercial-in-Confidence"'
+    - '--footer-html "file://%{html_dir}/footer.html?page=[page]&topage=[topage]&classifcation=Commercial-in-Confidence"'
+    - '--print-media-type'
+    - '--javascript-delay 100'
+
+metadata:
+    - '%{template_dir}/template_metadata.yaml'
+...
+
