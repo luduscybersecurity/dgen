@@ -61,8 +61,6 @@ class dgenProject(object):
         return True
 
     def refresh_template(self):
-        if not os.path.exists(self.template_dir):
-            dgen_utils.log_err('template_dir does not exist')
         if os.path.exists(self.local_template_dir):
             dgen_utils.delete_folder(self.local_template_dir)
         dgen_utils.copy_files(self.template_dir, self.local_template_dir)
@@ -70,7 +68,11 @@ class dgenProject(object):
 
     @property
     def template_dir(self):
-        return os.path.join(self.templates_root, self.template)
+        result = os.path.join(self.templates_root, self.template)
+        result = dgen_utils.expand_paths(result)
+        if not os.path.isdir(result):
+            dgen_utils.log_err('template_dir %s does not exist!' %(result))
+        return result
 
 
     @property
@@ -118,5 +120,5 @@ class dgenProject(object):
     def revealjs_dir(self, value):
         self.__revealjs_dir = dgen_utils.expand_paths(value)
         if not os.path.isdir(self.__revealjs_dir):
-            dgen_utils.log_err('revealjs_dir does not exist!')
+            dgen_utils.log_err('revealjs_dir %s does not exist!' %(value))
 
