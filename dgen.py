@@ -1,0 +1,180 @@
+#!/usr/bin/env python
+
+'''
+Report generation for degenerates
+'''
+import argparse
+import os
+
+import dgen_generator
+import dgen_config_parser
+import dgen_repo
+import dgen_utils
+
+
+class dgen(object):
+    '''
+    Run dgen
+    '''
+
+    def __init__(self):
+        '''
+        Run dgen
+        '''
+        self.project = None
+        global_config_file = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'global_config.yaml')
+        global_config_file = dgen_utils.expand_paths(global_config_file)
+        self.global_config = dgen_utils.load_config(global_config_file)
+        self.parse_options()
+
+
+    @property
+    def project(self):
+        return self.__project
+
+
+    @project.setter
+    def project(self, value):
+        self.__project = value
+
+
+    @property
+    def global_config(self):
+        return self.__global_config
+
+
+    @global_config.setter
+    def global_config(self, value):
+        self.__global_config = value
+
+
+    def remote_list(self, args):
+        dgen_repo.remote_list()
+
+
+    def remote_clone(self, args):
+        dgen_repo.remote_clone(args.args)
+
+
+    def run_git(self, args):
+        dgen_repo.run_git_cmd(args.args)
+
+
+    def load_project(self, project_config_file):
+        parser = dgen_config_parser.dgenConfigParser()
+        project_config = dgen_utils.load_config(project_config_file)
+        config = {}
+        config.update(self.global_config)
+        config.update(project_config)
+        project = parser.parse_project(config)
+        # template_config = dgen_utils.load_config(loader.project.template)
+        # loader.parse_project(template_config)
+
+        return project
+
+
+    def generate_html(self, args):
+        self.project = self.load_project(args.config)
+        html_generator = dgen_generator.dgenPandocGenerator(self.project)
+        # html_generator.project = self.project
+        html_generator.generate_pages('html')
+
+
+    def generate_pdf(self, args):
+        self.generate_html(args)
+        pdf_generator = dgen_generator.dgenPDFGenerator(self.project)
+        # pdf_generator.project = self.project
+        pdf_generator.generate_pdf()
+
+
+    def generate_reveal_js(self, args):
+        self.project = self.load_project(args.config)
+        reveal_generator = dgen_generator.dgenRevealGenerator(self.project)
+        # reveal_generator.project = self.project
+        reveal_generator.generate_pages('revealjs')
+
+
+    def add_gen_options(self, subparser):
+        '''
+        define options for document generation
+        '''
+        parser_gen = subparser.add_parser('gen',
+                                          help='Generate a document')
+        parser_gen.set_defaults(func=self.generate_pdf)
+        subparser_gen = parser_gen.add_subparsers()
+
+        parser_html = subparser_gen.add_parser('html',
+                                               help='Generate a html document')
+        parser_html.add_argument('--html-output', action='store',
+                                 help='write html output to the supplied directory')
+        parser_html.set_defaults(func=self.generate_html)
+        
+        parser_pdf = subparser_gen.add_parser('pdf', help='Generate a pdf document')
+        parser_pdf.add_argument('--html-dir', action='store', default='html',
+                                help='write html output to the supplied directory (default html)')
+        parser_pdf.set_defaults(func=self.generate_pdf)
+        
+        parser_reveal = subparser_gen.add_parser('revealjs',
+                                                help='Generate a reveal.js presentation')
+        parser_reveal.set_defaults(func=self.generate_reveal_js)
+
+    
+    # TODO: this feature is kinda lame. does it deserve to live? maybe a separate wrapper around gitlab?
+    def add_git_options(self, subparser):
+        parser_repo = subparser.add_parser('git',
+                                           help='run git command')
+        parser_repo.add_argument('args', nargs=argparse.REMAINDER)
+        parser_repo.set_defaults(func=self.run_git)
+
+
+    '''
+    TODO: should workflows even be part of this tool? maybe a separate wrapper around gitlab?
+    def add_workflow_options(self, subparser):
+        parser_workflow = subparser.add_parser('mark',
+                                                aliases=['mk', 'mrk'],
+                                                help='mark project as matching a workflow state')
+        parser_workflow.add_argument('--ignore', action='store_true', default=False,
+                                     help='Ignore workflow rules')
+        parser_workflow.add_argument('-m', '--message', action='store',
+                                     help='Message documenting workflow change.')
+    '''
+
+    def add_switches(self, parser):
+        parser.add_argument('-c', '--config', '--conf', 
+                            action='store', default='config.yaml',
+                            help='set the local config')
+        parser.add_argument('-d', '--debug',
+                            action='store_true', default=False,
+                            help='enable debugging output')
+        parser.add_argument('-r', '--refresh', '--refresh-template',
+                            action='store_true', default=False,
+                            help='force a refresh of the local document template')
+
+
+    def parse_options(self):
+        '''
+        Parse dgen options
+        '''
+        parser = argparse.ArgumentParser(prog='dgen',
+                                         description='Report generation for degenerates')
+        subparser = parser.add_subparsers()
+        self.add_switches(parser)
+        self.add_gen_options(subparser)
+        self.add_git_options(subparser)
+
+        args = parser.parse_args()
+        if hasattr(args, 'debug'):
+            dgen_utils.DEBUG=args.debug
+        if hasattr(args, 'refresh'):
+            dgen_utils.REFRESH_TEMPLATE=args.refresh
+        if hasattr(args, 'func'):
+            # Call one of generate_html, generate_pdf, generate_revealjs depending 
+            # on the function set
+            args.func(args)
+        else:
+            parser.print_usage()
+            parser.print_help()
+
+
+if __name__ == '__main__':
+    dgen()
