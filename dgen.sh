@@ -1,14 +1,11 @@
 #!/bin/bash
 
-
-if [ -z "$DGEN_TEMPLATES_ROOT" ];
+TEMPLATE_MOUNT=""
+if [ $DGEN_TEMPLATES_ROOT ]
 then
-    echo "ERROR: must set environment variable DGEN_TEMPLATES_ROOT, e.g."
-    echo "      export DGEN_TEMPLATES_ROOT=/path"
-    exit 1
+    TEMPLATE_MOUNT="--mount type=bind,source=$DGEN_TEMPLATES_ROOT,target=$DGEN_TEMPLATES_ROOT"
 fi
 
-
-docker run --mount type=bind,source="$(pwd)",target=/project \
-    --mount type=bind,source=$DGEN_TEMPLATES_ROOT,target=/templates \
-    -it dgen:latest /app/dgen "${@:1}"
+docker run --mount type=bind,source="$(pwd)",target=/project $TEMPLATE_MOUNT\
+    --user $(id -u):$(id -g) -it dgen:latest /app/dgen.py "${@:1}"
+    

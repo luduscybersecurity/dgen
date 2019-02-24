@@ -7,8 +7,10 @@
 pandoc_options: 
     - '--standalone' 
     - '--css=css/template.css'
-    - '--filter=%{bin_dir}/metavars.py'
     - '--filter=%{bin_dir}/pagebreak.py'
+    - '--filter=%{bin_dir}/metavars.py'
+    - '--filter=%{template_dir}/formatted-metavars.py'
+    
 
 wkhtmltopdf_options: 
     - '--page-size A4'

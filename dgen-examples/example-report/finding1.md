@@ -10,12 +10,8 @@ ssrxss:
     likelihood: Medium
     summary: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent at nisl sollicitudin, fermentum erat in, tristique nunc.
 
-var1: foo
-var1: bar
-var2:
-    var3: foo
-var2:
-    var4: var
+var1: 'https://www.google.com'
+
 ...
 
 # %{ssrxss.name}{.finding}
@@ -24,12 +20,6 @@ var2:
   [%{ssrxss.rating}]{.rating}   | %{ssrxss.impact}  | %{ssrxss.likelihood}
 
 ## Finding Details
-
-%{var1}
-
-%{var2.var3}
-
-%{var2.var4}
 
 %{ssrxss.summary}
 
@@ -63,9 +53,11 @@ some more text not in a list
 
 ![an image caption](screenshot.jpg)
 
-blah blah blah. there will be a link just here: <http://www.google.com>
+blah blah blah. there will be a link just here: <https://microsoft.com>
 
-blah blah blah another link [here](http://www.google.com).
+blah blah blah. there will be a link just here: <%{var1}>
+
+blah blah blah another link [%{var1}](%{var1}).
 
 %pagebreak
 

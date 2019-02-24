@@ -1,5 +1,8 @@
 import os
 import sys
+import re
+import git
+import shutil
 
 import dgen_document
 import dgen_template
@@ -60,25 +63,51 @@ class dgenProject(object):
             return False
         return True
 
+
     def refresh_template(self):
         if os.path.exists(self.local_template_dir):
             dgen_utils.delete_folder(self.local_template_dir)
-        dgen_utils.copy_files(self.template_dir, self.local_template_dir)
+        if self.__is_git_url(self.template_dir) is True:
+            repo = git.Repo.clone_from(self.template_dir, self.local_template_dir)
+            shutil.rmtree(os.path.join(self.local_template_dir, '.git'))
+        elif os.path.isdir(self.template_dir):
+            dgen_utils.copy_files(self.template_dir, self.local_template_dir)
+            
+
+    # TODO: refactor into git_utils class or some such
+    def __is_git_url(self, url):
+        PATTERN = re.compile(r'.*(\:|\/)(.*?)\.git\/?')
+        if PATTERN.match(url):
+            return True
+        return False
+
+
+    # TODO: refactor into git_utils class or some such
+    def __get_git_repo_name(self, url):
+        PATTERN = re.compile(r'.*(\:|\/)(.*?)\.git\/?')
+        if PATTERN.match(url):
+            return PATTERN.match(url).group(2)
+        return ''
 
 
     @property
     def template_dir(self):
+        
         result = os.path.join(self.templates_root, self.template)
+        if self.__is_git_url(result) is True:
+            return result
         result = dgen_utils.expand_paths(result)
-        if not os.path.isdir(result):
+        if os.path.isdir(result) is False:
             dgen_utils.log_err('template_dir %s does not exist!' %(result))
         return result
 
 
     @property
     def local_template_dir(self):
-        return os.path.join(os.getcwd(), self.template)
-
+        if self.__is_git_url(self.template_dir) is True:
+            return self.__get_git_repo_name(self.template_dir)
+        return os.path.join(os.getcwd(), os.path.basename(os.path.normpath(self.template_dir)))
+        
 
     @property
     def templates_root(self):

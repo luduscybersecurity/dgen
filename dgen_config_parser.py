@@ -40,7 +40,6 @@ class dgenConfigParser(object):
         self.no_unknown_in_conf(known, project_config)
         mandatory = ['document',
                     'template',
-                    'templates_root',
                     'filename']
         self.all_mandatory_in_conf(mandatory, project_config)
         if 'templates_root' in project_config:
