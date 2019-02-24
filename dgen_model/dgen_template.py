@@ -10,7 +10,6 @@ class dgenTemplateConfig(object):
         self.metadata = []
 
         
-
     @property
     def pandoc_options(self):
         return self.__pandoc_options

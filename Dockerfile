@@ -8,8 +8,6 @@ RUN ln -nfs /usr/bin/wkhtmltopdf /usr/local/bin/wkhtmltopdf
 RUN pip install pyyaml panflute
 WORKDIR /app
 COPY . .
-RUN echo "templates_root: '/templates'\n" > /app/global-config.yaml
 RUN PATH="/app/:${PATH}"
 RUN mkdir -p /project
-RUN mkdir -p /templates
 WORKDIR /project

@@ -1,6 +1,12 @@
 *.pyc
-.vscode/**
-__pycache__/**
+**/*.pyc
+.vscode
+__pycache__
+**/__pycache__
 dgen-examples/example-report/default
+dgen-examples/example-report/pentest_report-html
+dgen-examples/example-report/pentest_report.pdf
 dgen-examples/example-slide-show/slide-show
+dgen-examples/example-slide-show/slide-show-html
 global_config.yaml
+

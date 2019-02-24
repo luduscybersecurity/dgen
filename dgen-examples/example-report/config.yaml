@@ -24,6 +24,6 @@ document:
             - 'metadata.yaml'
         template_conf: 'body_config.yaml'
 filename: 'pentest_report'
-template: 'default'
+template: '../dgen-templates/default'
 template_conf: 'document_config.yaml'
 

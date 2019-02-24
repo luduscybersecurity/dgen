@@ -111,7 +111,7 @@ class dgenPandocGenerator(dgenGenerator):
         dgen_utils.delete_folder(html_dir)
         # Copy the template html folder
         
-        src = os.path.join(self.project.template_dir, 'html')
+        src = os.path.join(self.project.local_template_dir, 'html')
         src = dgen_utils.expand_paths(src)
         dgen_utils.copy_files(src, html_dir)
         # Copy other files to the HTML dir for referencing

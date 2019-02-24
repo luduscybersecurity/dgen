@@ -167,11 +167,13 @@ def load_config(path):
     '''
     Load the yaml config at path
     '''
+    config = None
     try:
         path = expand_paths(path)
-        config = {}
         with open(path, 'r') as fpr:
             config = yaml.safe_load(fpr)
     except:
         log_err('can not load config: %s' % (path))
+    if config is None:
+        config = {}
     return config
