@@ -9,5 +9,4 @@ dgen-examples/example-report/pentest_report-html
 dgen-examples/example-report/pentest_report.pdf
 dgen-examples/example-slide-show/slide-show
 dgen-examples/example-slide-show/slide-show-html
-global_config.yaml
-
+*.yaml

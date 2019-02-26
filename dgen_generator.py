@@ -126,7 +126,7 @@ class dgenPandocGenerator(dgenGenerator):
         for root, _, files in os.walk(html_dir, topdown=False):
             for name in files:
                 # Symbol processor must be initialised previously
-                self.symbol_processor.replace_symbols_in_file(os.path.join(root, name))
+                self.symbol_processor.replace_symbols_in_file(os.path.join(root, name), self.symbol_processor.symbols)
 
 
     def print_markdown_contents(self, contents):
