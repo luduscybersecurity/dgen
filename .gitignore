@@ -1,6 +1,7 @@
 *.pyc
 **/*.pyc
 .vscode
+.vscode/**
 __pycache__
 **/__pycache__
 dgen-examples/example-report/default

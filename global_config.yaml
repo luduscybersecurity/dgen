@@ -1,1 +1,1 @@
-templates_root: '../dgen-templates'
+templates_root: '../../dgen-examples/dgen-templates'
