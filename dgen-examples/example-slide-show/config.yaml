@@ -18,8 +18,8 @@ document:
             - topic_abc.md
             - metadata.yaml
 filename: presentation
-template: slide-show
+template: ../../dgen-examples/dgen-templates/slide-show
 template_conf: template_config.yaml
-revealjs_dir: '~/code/reveal.js'
+revealjs_dir: '~/reveal.js'
 
 ...
