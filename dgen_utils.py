@@ -6,11 +6,13 @@ import os
 import traceback
 import subprocess
 import io
+import glob
 
 import yaml
 
-DEBUG=False
-REFRESH_TEMPLATE=False
+DEBUG = False
+REFRESH_TEMPLATE = False
+
 
 def eprint(*args, **kwargs):
     '''
@@ -41,27 +43,29 @@ def log_dbg(*string, **kwargs):
     Log warning string to std error.
     '''
     if DEBUG is True:
-        eprint('DEBUG:', sys._getframe(1).f_code.co_name + ':', *string, **kwargs)
+        eprint('DEBUG:', sys._getframe(
+            1).f_code.co_name + ':', *string, **kwargs)
 
 
 def delete_folder(path):
     '''
-    Delete the specified folder/file
+    Delete the specified folder/files. Globs are supported
     '''
-    path = expand_paths(path)
-    if os.path.exists(path):
-        if os.path.isfile(path):
-            os.unlink(path)
-        elif os.path.isdir(path):
-            shutil.rmtree(path)
+    expanded_paths = expand_path_with_glob(path)
+    for expanded_path in expanded_paths:
+        if os.path.exists(path):
+            if os.path.isfile(path):
+                os.unlink(path)
+            elif os.path.isdir(path):
+                shutil.rmtree(path)
 
 
 def copy_files(src, dst):
     '''
     Copy all the files from the path src to dst.
     '''
-    src = expand_paths(src)
-    dst = expand_paths(dst)
+    src = expand_path(src)
+    dst = expand_path(dst)
     try:
         shutil.copytree(src, dst)
     except OSError as exc:
@@ -80,8 +84,8 @@ def copy_folders(src, dst):
     '''
     Copy all the folders (only) in path src to dst.
     '''
-    src = expand_paths(src)
-    dst = expand_paths(dst)
+    src = expand_path(src)
+    dst = expand_path(dst)
     for folder in os.listdir(src):
         copy_src = os.path.join(src, folder)
         copy_dst = os.path.join(dst, folder)
@@ -109,21 +113,22 @@ def run_cmd_with_io(cmd, args, cwd=None, stdindata=None):
     if stdindata is not None:
         stdin = subprocess.PIPE
         try:
-            pass
             stdindata = stdindata.encode('utf-8')
         except UnicodeEncodeError:
             log_dbg("eeeek! UnicodeEncodeError hope everything is okay :$")
-    p = subprocess.Popen(cmd + args, cwd=cwd, stdin=stdin, stdout=stdout, stderr=stdout)
+    p = subprocess.Popen(cmd + args, cwd=cwd, stdin=stdin,
+                         stdout=stdout, stderr=stdout)
     if not (p.returncode is None):
         log_err('died with exitcode "%s" before execution' % (p.returncode))
     try:
         (stdout, stderr) = p.communicate(stdindata if stdindata else None)
         result = stdout.decode('utf-8')
-        if p.returncode != 0:
-            log_warn('terminated with exitcode %s' % (p.returncode))
         error_text = stderr.decode('utf-8')
         if error_text != '':
-            log_warn('content from stderr for cmd: %s\n%s' % (' '.join(cmd + args), error_text))
+            log_warn('content from stderr for cmd: %s\n%s' %
+                     (' '.join(cmd + args), error_text))
+        if p.returncode != 0:
+            log_err('terminated with exitcode %s' % (p.returncode))
     except OSError:
         log_err('died with exitcode %s during execution.' % (p.returncode))
     except UnicodeDecodeError:
@@ -146,21 +151,19 @@ def run_cmd(cmd, args, cwd=None):
         log_err('process terminated with exitcode %s' % (rc))
 
 
-def __expand_path_str(path):
+def expand_path(path):
     path = os.path.expanduser(path)
     path = os.path.expandvars(path)
     path = os.path.abspath(path)
     return path
 
 
-def expand_paths(paths):
-    if isinstance(paths, list):
-        result = []
-        for path in paths:
-            result = result + [__expand_path_str(path)]
-    else:
-        result = __expand_path_str(paths)
-    return result
+def expand_path_with_glob(path, file_sorter=None):
+    expanded_path = expand_path(path)
+    unglobbed_paths = glob.glob(expanded_path)
+    if file_sorter is not None:
+        unglobbed_paths = file_sorter.sort_files(unglobbed_paths)
+    return unglobbed_paths
 
 
 def load_config(path):
@@ -169,8 +172,8 @@ def load_config(path):
     '''
     config = None
     try:
-        path = expand_paths(path)
-        with open(path, 'r') as fpr:
+        expanded_path = expand_path(path)
+        with open(expanded_path, 'r') as fpr:
             config = yaml.safe_load(fpr)
     except:
         log_err('can not load config: %s' % (path))

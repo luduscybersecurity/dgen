@@ -23,7 +23,7 @@ class dgen(object):
         '''
         self.project = None
         global_config_file = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'global_config.yaml')
-        global_config_file = dgen_utils.expand_paths(global_config_file)
+        global_config_file = dgen_utils.expand_path(global_config_file)
         self.global_config = dgen_utils.load_config(global_config_file)
         self.parse_options()
 

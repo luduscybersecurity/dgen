@@ -18,12 +18,11 @@ document:
         contents: 
             - 'exec.md'
             - 'intro.md'
-            - 'finding1.md'
-            - 'finding2.md'
+            - 'findings/*.md'
             - 'appendix.md'
             - 'metadata.yaml'
         template_conf: 'body_config.yaml'
 filename: 'pentest_report'
-template: '../../dgen-examples/dgen-templates/default'
+template: 'default'
 template_conf: 'document_config.yaml'
 
