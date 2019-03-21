@@ -5,6 +5,7 @@ import io
 import glob
 
 import dgen_utils
+import dgen_generator
 from dgen_model import dgen_project
 from dgen_model import dgen_document
 from dgen_model import dgen_section
@@ -69,9 +70,9 @@ class dgenConfigParser(object):
         if 'filename' in project_config:
             self.project.filename = self.parse_filename(
                 project_config['filename'])
-        if 'file_sorters' in project_config:
-            self.project.file_sorter = self.parse_file_sorters(
-                project_config['file_sorters'])
+        if 'file_sorter' in project_config:
+            self.project.file_sorter = self.parse_file_sorter(
+                project_config['file_sorter'])
         return self.project
 
     def parse_template_conf(self, template_config_file_conf):
@@ -170,22 +171,12 @@ class dgenConfigParser(object):
     def parse_template_root(self, template_root_conf):
         return self.parse_string(template_root_conf)
 
-    def parse_file_sorters(self, file_sorters_conf):
-        if isinstance(file_sorters_conf, str):
-            return self.parse_file_sorter(file_sorters_conf)
-        elif isinstance(file_sorters_conf, list):
-            sorters = []
-            for item in file_sorters_conf:
-                sorters += self.parse_file_sorter(file_sorters_conf)
-            return sorters
-        else:
-            dgen_utils.log_err(
-                "expected string or list, got:", file_sorters_conf)
-
     def parse_file_sorter(self, file_sorter_conf):
         sorter_path = self.parse_string(file_sorter_conf)
         sorter = dgen_file_sorter.dgenFileSorter()
-        sorter.source_code_path = sorter_path
+        symbol_processor = dgen_generator.dgenSymbolProcessor(self.project)
+        sorter.source_code_path = symbol_processor.replace_symbols_in_string(
+            sorter_path)
         return sorter
 
     def parse_list(self, list_conf):

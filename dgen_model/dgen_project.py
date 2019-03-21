@@ -62,9 +62,9 @@ class dgenProject(object):
         self.__template_conf = value
 
     def template_refresh_required(self):
-        if dgen_utils.REFRESH_TEMPLATE is False and os.path.exists(self.local_template_dir):
-            return False
-        return True
+        if dgen_utils.REFRESH_TEMPLATE is True or not os.path.exists(self.local_template_dir):
+            return True
+        return False
 
     def refresh_template(self):
         if os.path.exists(self.local_template_dir):

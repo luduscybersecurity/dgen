@@ -8,7 +8,6 @@ import dgen_utils
 class dgenFileSorter(object):
 
     def __init__(self):
-        self.source_code_path = ''
         self.__imported_module = None
 
     @property

@@ -162,7 +162,7 @@ def expand_path_with_glob(path, file_sorter=None):
     expanded_path = expand_path(path)
     unglobbed_paths = glob.glob(expanded_path)
     if file_sorter is not None:
-        unglobbed_paths = file_sorter.sort_files(unglobbed_paths)
+        return file_sorter.sort_files(unglobbed_paths)
     return unglobbed_paths
 
 

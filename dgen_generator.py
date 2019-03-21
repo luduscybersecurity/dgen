@@ -132,8 +132,6 @@ class dgenPandocGenerator(dgenGenerator):
             self.project.template_conf.metadata +
             document.template_conf.metadata +
             document.contents)
-        output_file = os.path.join(
-            self.project.html_dir, document.html_filename)
         # Build the document contents
         contents = u'\n'
         symbols = dict(self.symbol_processor.symbols)
@@ -150,6 +148,8 @@ class dgenPandocGenerator(dgenGenerator):
                 else:
                     dgen_utils.log_err('file does not exist:', expanded_path)
         self.print_markdown_contents(contents)
+        output_file = os.path.join(
+            self.project.html_dir, document.html_filename)
         pandoc_options = self.project.template_conf.pandoc_options
         pandoc_options = document.template_conf.pandoc_options + pandoc_options
         pandoc_options = self.symbol_processor.replace_symbols_in_collection(
