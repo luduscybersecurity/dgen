@@ -1,6 +1,10 @@
 #!/usr/bin/env python
 
 import dgen_utils
+
+# disable annoying warning from click caused by panflute. An upgrade to python 3 might fix
+import click
+click.disable_unicode_literals_warning = True
 from panflute import Link, Str, ListContainer, Code
 import panflute
 
@@ -8,11 +12,6 @@ import re
 import codecs
 import sys
 import urllib2
-
-# disable annoying warning from click caused by panflute. An upgrade to python 3 might fix
-import click
-click.disable_unicode_literals_warning = True
-
 
 #import ptvsd
 # 5678 is the default attach port in the VS Code debug configurations
