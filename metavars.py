@@ -13,13 +13,6 @@ import codecs
 import sys
 import urllib2
 
-#import ptvsd
-# 5678 is the default attach port in the VS Code debug configurations
-#print("Waiting for debugger attach")
-#ptvsd.enable_attach(address=('localhost', 5678), redirect_output=True)
-# ptvsd.wait_for_attach()
-# breakpoint()
-
 PATTERN = None
 PATTERN_BAD = None
 
@@ -33,7 +26,6 @@ def init_metavars(doc):
 def filter_text(text, document):
     text = urllib2.unquote(text)
     for match in PATTERN.finditer(text):
-        #dgen_utils.log_warn(':'.join([str(elem.parent),elem.text, text, match.group(1), match.group(2), match.group(3)]))
         field = match.group(2)
         result = document.get_metadata(field, None)
         if isinstance(result, unicode):

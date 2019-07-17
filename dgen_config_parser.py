@@ -49,30 +49,30 @@ class dgenConfigParser(object):
         self.all_mandatory_in_conf(mandatory, project_config)
         if 'templates_root' in project_config:
             self.project.templates_root = self.parse_templates_root(
-                project_config['templates_root'])
+                self.getenv(project_config['templates_root']))
         if 'template' in project_config:
             self.project.template = self.parse_template(
-                project_config['template'])
+                self.getenv(project_config['template']))
             if self.project.template_refresh_required():
                 self.project.refresh_template()
         if 'template_conf' in project_config:
             self.project.template_conf = self.parse_template_conf(
-                project_config['template_conf'])
+                self.getenv(project_config['template_conf']))
         if 'document' in project_config:
             self.project.document = self.parse_document(
                 project_config['document'])
         if 'metadata' in project_config:
             self.project.metadata = self.parse_metadata(
-                project_config['metadata'])
+                self.getenv(project_config['metadata']))
         if 'revealjs_dir' in project_config:
             self.project.revealjs_dir = self.parse_revealjs(
-                project_config['revealjs_dir'])
+                self.getenv(project_config['revealjs_dir']))
         if 'filename' in project_config:
             self.project.filename = self.parse_filename(
-                project_config['filename'])
+                self.getenv(project_config['filename']))
         if 'file_sorter' in project_config:
             self.project.file_sorter = self.parse_file_sorter(
-                project_config['file_sorter'])
+                self.getenv(project_config['file_sorter']))
         return self.project
 
     def parse_template_conf(self, template_config_file_conf):
@@ -206,3 +206,6 @@ class dgenConfigParser(object):
         for key in conf:
             if not key in known:
                 dgen_utils.log_err('unknown attribute:', key)
+
+    def getenv(self, var_name):
+        return os.getenv(var_name.upper(), var_name)
