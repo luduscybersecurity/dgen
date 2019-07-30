@@ -70,32 +70,10 @@ class dgen(object):
         pdf_generator.generate_pdf()
 
 
-    def generate_reveal_js(self, args):
+    def generate_revealjs(self, args):
         self.project = self.load_project(args.config)
         reveal_generator = dgen_generator.dgenRevealGenerator(self.project)
         reveal_generator.generate_pages('revealjs')
-
-
-    def add_options(self, parser):
-        '''
-        define options for document generation
-        '''
-        parser.set_defaults(func=self.generate_pdf)
-        subparser = parser.add_subparsers()
-
-        parser_html = subparser.add_parser('html',
-                                               help='Generate a html document')
-        self.add_switches(parser_html)
-        parser_html.set_defaults(func=self.generate_html)
-        
-        parser_pdf = subparser.add_parser('pdf', help='Generate a pdf document')
-        self.add_switches(parser_pdf)
-        parser_pdf.set_defaults(func=self.generate_pdf)
-        
-        parser_reveal = subparser.add_parser('revealjs',
-                                            help='Generate a reveal.js presentation')
-        self.add_switches(parser_reveal)
-        parser_reveal.set_defaults(func=self.generate_reveal_js)
 
     
     def add_switches(self, parser):
@@ -129,10 +107,10 @@ class dgen(object):
             dgen_utils.DEBUG=args.debug
         if hasattr(args, 'refresh'):
             dgen_utils.REFRESH_TEMPLATE=args.refresh
-        if args.html is True:
+        if hasattr(args, 'html') is True:
             self.generate_html(args)
-        elif args.reveal_js is True:
-            self.generate_reveal_js(args)
+        elif hasattr(args, 'revealjs') is True:
+            self.generate_revealjs(args)
         else:
             self.generate_pdf(args)
 
