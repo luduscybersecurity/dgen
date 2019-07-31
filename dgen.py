@@ -66,6 +66,7 @@ class dgen(object):
 
     def generate_pdf(self, args):
         self.generate_html(args)
+        print("Generating PDF")
         pdf_generator = dgen_generator.dgenPDFGenerator(self.project)
         pdf_generator.generate_pdf()
 
@@ -103,13 +104,12 @@ class dgen(object):
                                          description='Report generation for degenerates')
         self.add_switches(parser)
         args = parser.parse_args()
-        if hasattr(args, 'debug'):
-            dgen_utils.DEBUG=args.debug
-        if hasattr(args, 'refresh'):
-            dgen_utils.REFRESH_TEMPLATE=args.refresh
-        if hasattr(args, 'html') is True:
+        
+        dgen_utils.DEBUG=args.debug
+        dgen_utils.REFRESH_TEMPLATE=args.refresh
+        if args.html is True:
             self.generate_html(args)
-        elif hasattr(args, 'revealjs') is True:
+        elif args.revealjs is True:
             self.generate_revealjs(args)
         else:
             self.generate_pdf(args)
