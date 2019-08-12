@@ -40,6 +40,7 @@ class dgenConfigParser(object):
                  'templates_root',
                  'revealjs_dir',
                  'filename',
+                 'classification',
                  'metadata',
                  'file_sorter']
         self.no_unknown_in_conf(known, project_config)
@@ -70,6 +71,9 @@ class dgenConfigParser(object):
         if 'filename' in project_config:
             self.project.filename = self.parse_filename(
                 os.getenv('filename', project_config['filename']))
+        if 'classification' in project_config:
+            self.project.classification = self.parse_classification(
+                os.getenv('classification', project_config['classification']))
         if 'file_sorter' in project_config:
             self.project.file_sorter = self.parse_file_sorter(
                 os.getenv('file_sorter', project_config['file_sorter']))
@@ -155,6 +159,9 @@ class dgenConfigParser(object):
 
     def parse_filename(self, filename_conf):
         return self.parse_string(filename_conf)
+
+    def parse_classification(self, classification_conf):
+        return self.parse_string(classification_conf)
 
     def parse_metadata(self, parse_metadata_conf):
         return self.parse_list(parse_metadata_conf)

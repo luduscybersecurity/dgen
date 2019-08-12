@@ -20,6 +20,7 @@ class dgenProject(object):
         self.template = ''
         self.template_conf = ''
         self.filename = ''
+        self.classification = ''
         self.revealjs_dir = ''
         self.file_sorter = None
 
@@ -44,6 +45,14 @@ class dgenProject(object):
         if self.filename == '':
             dgen_utils.log_err('filename not set')
         return '.'.join([self.filename, 'pdf'])
+
+    @property
+    def classification(self):
+        return self.__classification
+
+    @classification.setter
+    def classification(self, value):
+        self.__classification = value
 
     @property
     def document(self):
