@@ -8,7 +8,6 @@ import os
 
 import dgen_generator
 import dgen_config_parser
-import dgen_repo
 import dgen_utils
 
 
@@ -22,31 +21,27 @@ class dgen(object):
         Run dgen
         '''
         self.project = None
-        global_config_file = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'global_config.yaml')
+        user_config_dir = dgen_utils.get_user_config_dir()
+        global_config_file = os.path.join(user_config_dir, 'global_config.yaml')
         global_config_file = dgen_utils.expand_path(global_config_file)
         self.global_config = dgen_utils.load_config(global_config_file)
         self.parse_options()
-
 
     @property
     def project(self):
         return self.__project
 
-
     @project.setter
     def project(self, value):
         self.__project = value
-
 
     @property
     def global_config(self):
         return self.__global_config
 
-
     @global_config.setter
     def global_config(self, value):
         self.__global_config = value
-
 
     def load_project(self, project_config_file):
         parser = dgen_config_parser.dgenConfigParser()
@@ -57,12 +52,10 @@ class dgen(object):
         project = parser.parse_project(config)
         return project
 
-
     def generate_html(self, args):
         self.project = self.load_project(args.config)
         html_generator = dgen_generator.dgenPandocGenerator(self.project)
         html_generator.generate_pages('html')
-
 
     def generate_pdf(self, args):
         self.generate_html(args)
@@ -70,14 +63,12 @@ class dgen(object):
         pdf_generator = dgen_generator.dgenPDFGenerator(self.project)
         pdf_generator.generate_pdf()
 
-
     def generate_revealjs(self, args):
         self.project = self.load_project(args.config)
         reveal_generator = dgen_generator.dgenRevealGenerator(self.project)
         reveal_generator.generate_pages('revealjs')
-
-    
-    def add_switches(self, parser):
+   
+    def add_options(self, parser):
         parser.add_argument('-c', '--config', '--conf', 
                             action='store', default='config.yaml',
                             help='set the local config')
@@ -87,6 +78,7 @@ class dgen(object):
         parser.add_argument('-r', '--refresh', '--refresh-template',
                             action='store_true', default=False,
                             help='force a refresh of the local document template')
+        parser.add_argument('-o', '--offline', action='store_true', default=False)
         group = parser.add_mutually_exclusive_group()
         group.add_argument('--pdf', action='store_true', default=True,
                             help='Generate a pdf document')
@@ -94,26 +86,24 @@ class dgen(object):
                             help='Generate a html document')
         group.add_argument('--revealjs', action='store_true', default=False,
                             help='Generate a reveal.js presentation')
-        
-
+       
     def parse_options(self):
         '''
         Parse dgen options
         '''
         parser = argparse.ArgumentParser(prog='dgen',
                                          description='Report generation for degenerates')
-        self.add_switches(parser)
+        self.add_options(parser)
         args = parser.parse_args()
-        
-        dgen_utils.DEBUG=args.debug
-        dgen_utils.REFRESH_TEMPLATE=args.refresh
+        dgen_utils.DEBUG = args.debug
+        dgen_utils.REFRESH_TEMPLATE = args.refresh
+        dgen_utils.WORK_OFFLINE = args.offline
         if args.html is True:
             self.generate_html(args)
         elif args.revealjs is True:
             self.generate_revealjs(args)
         else:
             self.generate_pdf(args)
-
 
 if __name__ == '__main__':
     dgen()
