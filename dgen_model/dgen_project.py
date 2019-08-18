@@ -1,14 +1,13 @@
 import os
 import sys
 import re
-import git
 import shutil
+import git
 
 import dgen_document
 import dgen_template
 import dgen_file_sorter
 import dgen_utils
-
 
 class dgenProject(object):
 
@@ -22,6 +21,7 @@ class dgenProject(object):
         self.filename = ''
         self.revealjs_dir = ''
         self.file_sorter = None
+        self.pathspec = 'master'
 
     @property
     def file_sorter(self):
@@ -61,41 +61,41 @@ class dgenProject(object):
     def template_conf(self, value):
         self.__template_conf = value
 
+    @property
+    def pathspec(self):
+        # if self.__pathspec is '':
+        #     dgen_utils.log_warn("pathspec hasn't been set, project template may change over time. using 'master'")
+        #     return 'master'
+        return self.__pathspec
+
+    @pathspec.setter
+    def pathspec(self, value):
+        self.__pathspec = value
+
+
     def template_refresh_required(self):
         if dgen_utils.REFRESH_TEMPLATE is True or not os.path.exists(self.local_template_dir):
             return True
         return False
 
+
     def refresh_template(self):
         if os.path.exists(self.local_template_dir):
             dgen_utils.delete_folder(self.local_template_dir)
-        if self.__is_git_url(self.template_dir) is True:
-            repo = git.Repo.clone_from(
-                self.template_dir, self.local_template_dir)
-            shutil.rmtree(os.path.join(self.local_template_dir, '.git'))
+        if dgen_utils.is_git_url(self.template_dir) is True:
+            repo = git.Repo.clone_from(self.template_dir, self.local_template_dir, progress=dgen_utils.GitProgress())
+            for remote in repo.remotes:
+                remote.fetch(progress=dgen_utils.GitProgress())
+            g = git.Git(repo.working_dir)
+            g.checkout(self.pathspec)
         elif os.path.isdir(self.template_dir):
             dgen_utils.copy_files(self.template_dir, self.local_template_dir)
 
-    # TODO: refactor into git_utils class or some such
-
-    def __is_git_url(self, url):
-        PATTERN = re.compile(r'.*(\:|\/)(.*?)\.git\/?')
-        if PATTERN.match(url):
-            return True
-        return False
-
-    # TODO: refactor into git_utils class or some such
-
-    def __get_git_repo_name(self, url):
-        PATTERN = re.compile(r'.*(\:|\/)(.*?)\.git\/?')
-        if PATTERN.match(url):
-            return PATTERN.match(url).group(2)
-        return ''
 
     @property
     def template_dir(self):
         result = os.path.join(self.templates_root, self.template)
-        if self.__is_git_url(result) is True:
+        if dgen_utils.is_git_url(result) is True:
             return result
         result = dgen_utils.expand_path(result)
         if os.path.isdir(result) is False:
@@ -104,9 +104,9 @@ class dgenProject(object):
 
     @property
     def local_template_dir(self):
-        if self.__is_git_url(self.template_dir) is True:
-            return self.__get_git_repo_name(self.template_dir)
-        return os.path.join(os.getcwd(), os.path.basename(os.path.normpath(self.template_dir)))
+        if dgen_utils.is_git_url(self.template_dir) is True:
+            return os.path.join(dgen_utils.get_user_config_dir(), dgen_utils.get_git_repo_name(self.template_dir))
+        return os.path.join(dgen_utils.get_user_config_dir, os.path.basename(os.path.normpath(self.template_dir)))
 
     @property
     def templates_root(self):

@@ -4,6 +4,7 @@ import io
 import mimetypes
 import glob
 import re
+import git
 
 import dgen_model
 import dgen_utils
@@ -92,10 +93,21 @@ class dgenPandocGenerator(dgenGenerator):
     def __init__(self, project=None):
         dgenGenerator.__init__(self, project)
 
+    def working_offline(self):
+        if dgen_utils.is_git_url(self.project.template_dir) is False or dgen_utils.WORK_OFFLINE is True:
+            return True
+        return False
+
     def prepare_html_dir(self, html_dir):
         '''
         Prepare the html_directory, copying it from the project's template
         '''
+        if self.working_offline() is False:
+            repo = git.Repo(self.project.local_template_dir)
+            for remote in repo.remotes:
+                remote.fetch(progress=dgen_utils.GitProgress())
+            g = git.Git(repo.working_dir)
+            g.checkout(self.project.pathspec)
         cwd = os.getcwd()
         # Delete the html folder if it exists
         dgen_utils.delete_folder(html_dir)

@@ -38,6 +38,7 @@ class dgenConfigParser(object):
                  'template',
                  'template_conf',
                  'templates_root',
+                 'pathspec',
                  'revealjs_dir',
                  'filename',
                  'metadata',
@@ -50,6 +51,8 @@ class dgenConfigParser(object):
         if 'templates_root' in project_config:
             self.project.templates_root = self.parse_templates_root(
                 os.getenv('templates_root', project_config['templates_root']))
+        if 'pathspec' in project_config:
+            self.project.pathspec = self.parse_pathspec(project_config['pathspec'])
         if 'template' in project_config:
             self.project.template = self.parse_template(
                 os.getenv('template', project_config['template']))
@@ -143,6 +146,9 @@ class dgenConfigParser(object):
 
     def parse_template(self, template_conf):
         return self.parse_string(template_conf)
+
+    def parse_pathspec(self, tag_conf):
+        return self.parse_string(tag_conf)
 
     def parse_wkhtmltopdf_options(self, wkhtmltopdf_options_conf):
         return self.parse_list(wkhtmltopdf_options_conf)
