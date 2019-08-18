@@ -30,9 +30,11 @@ class dgenSymbolProcessor(object):
         self.symbols = {'pdf_filename': project.pdf_filename,
                         'bin_dir': project.bin_dir,
                         'template_dir': project.local_template_dir,
-                        'html_dir': project.html_dir}
+                        'html_dir': project.html_dir,
+                        'classification': project.classification}
         for key, value in self.symbols.items():
-            self.symbols[key] = dgen_utils.expand_path(value)
+            if key is not 'classification':
+                self.symbols[key] = dgen_utils.expand_path(value)
 
     def replace_symbols_in_collection(self, collection, symbols=None):
         for i, string in enumerate(collection):

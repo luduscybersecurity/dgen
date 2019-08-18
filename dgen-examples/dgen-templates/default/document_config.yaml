@@ -16,8 +16,8 @@ wkhtmltopdf_options:
     - '--page-size A4'
     - '--margin-top 2.2cm'
     - '--margin-bottom 2.2cm'
-    - '--header-html "file://%{html_dir}/header.html?classifcation=Commercial-in-Confidence"'
-    - '--footer-html "file://%{html_dir}/footer.html?page=[page]&topage=[topage]&classifcation=Commercial-in-Confidence"'
+    - '--header-html "file://%{html_dir}/header.html?classifcation=%{classification}"'
+    - '--footer-html "file://%{html_dir}/footer.html?page=[page]&topage=[topage]&classifcation=%{classification}"'
     - '--print-media-type'
     - '--javascript-delay 100'
 
