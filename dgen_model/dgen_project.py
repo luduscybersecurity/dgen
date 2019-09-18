@@ -9,6 +9,7 @@ import dgen_template
 import dgen_file_sorter
 import dgen_utils
 
+
 class dgenProject(object):
 
     def __init__(self):
@@ -81,25 +82,23 @@ class dgenProject(object):
     def pathspec(self, value):
         self.__pathspec = value
 
-
     def template_refresh_required(self):
         if dgen_utils.REFRESH_TEMPLATE is True or not os.path.exists(self.local_template_dir):
             return True
         return False
 
-
     def refresh_template(self):
         if os.path.exists(self.local_template_dir):
             dgen_utils.delete_folder(self.local_template_dir)
         if dgen_utils.is_git_url(self.template_dir) is True:
-            repo = git.Repo.clone_from(self.template_dir, self.local_template_dir, progress=dgen_utils.GitProgress())
+            repo = git.Repo.clone_from(
+                self.template_dir, self.local_template_dir, progress=dgen_utils.GitProgress())
             for remote in repo.remotes:
                 remote.fetch(progress=dgen_utils.GitProgress())
             g = git.Git(repo.working_dir)
             g.checkout(self.pathspec)
         elif os.path.isdir(self.template_dir):
             dgen_utils.copy_files(self.template_dir, self.local_template_dir)
-
 
     @property
     def template_dir(self):
@@ -115,7 +114,7 @@ class dgenProject(object):
     def local_template_dir(self):
         if dgen_utils.is_git_url(self.template_dir) is True:
             return os.path.join(dgen_utils.get_user_config_dir(), dgen_utils.get_git_repo_name(self.template_dir))
-        return os.path.join(dgen_utils.get_user_config_dir, os.path.basename(os.path.normpath(self.template_dir)))
+        return os.path.join(dgen_utils.get_user_config_dir(), os.path.basename(os.path.normpath(self.template_dir)))
 
     @property
     def templates_root(self):
