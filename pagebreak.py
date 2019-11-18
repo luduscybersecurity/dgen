@@ -8,8 +8,8 @@ import sys
 from collections import OrderedDict
 
 # disable annoying warning from click caused by panflute. An upgrade to python 3 might fix
-import click
-click.disable_unicode_literals_warning = True
+#import click
+#click.disable_unicode_literals_warning = True
 
 import panflute
 from panflute import Para, Str, Div
@@ -40,8 +40,8 @@ def finalize(doc):
 
 
 def main(doc=None):
-    input_stream = codecs.getreader('utf8')(sys.stdin)
-    return panflute.run_filter(filter, prepare=init_pagebreak, finalize=finalize, doc=doc, input_stream=input_stream)
+    #input_stream = codecs.getreader('utf8')(sys.stdin)
+    return panflute.run_filter(filter, prepare=init_pagebreak, finalize=finalize, doc=doc)#, input_stream=input_stream)
 
 
 if __name__ == '__main__':

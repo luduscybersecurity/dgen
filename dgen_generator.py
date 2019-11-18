@@ -6,10 +6,8 @@ import glob
 import re
 import git
 
-import dgen_model
 import dgen_utils
-
-from dgen_model import dgen_project
+import dgen_model.dgen_project as dgen_project
 
 
 class dgenSymbolProcessor(object):
@@ -47,10 +45,10 @@ class dgenSymbolProcessor(object):
         matches_bad = re.finditer(r'(\${.*?})', string)
         for bad_match in matches_bad:
             dgen_utils.log_warn(
-                "found wrong syntax for symbol:", bad_match.group(0))
+                "found wrong syntax for symbol: '%s' in string '%s'" % (bad_match.group(0), string))
         for key, value in symbols.items():
             search_string = '%{' + key + '}'
-            string = re.sub(search_string, unicode(value), string)
+            string = re.sub(search_string, value, string)
         return string
 
     def replace_symbols_in_file(self, path, symbols=None):
