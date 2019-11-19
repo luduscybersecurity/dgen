@@ -145,14 +145,13 @@ def run_cmd(cmd, args, cwd=None):
         cmd = [cmd]
     if not isinstance(args, list):
         args = [args]
-    cmd_args = []
+    cmd_str = ''
+
     # this is gross, but wkhtmltopdf doesn't support being run from a list
-    for arg in (cmd + args):
-        for part in shlex.split(arg):
-            cmd_args = cmd_args + [shlex.quote(part)]
-    cmd_args = ' '.join(cmd_args)
-    log_dbg('cwd: %s\n\t\tcmd: %s' % (cwd, cmd_args))
-    rc = subprocess.call(cmd_args, cwd=cwd, shell=True)
+    for arg in shlex.split(' '.join(cmd + args)):
+        cmd_str += shlex.quote(arg) + ' '
+    log_dbg('cwd: %s\n\t\tcmd: %s' % (cwd, cmd_str))
+    rc = subprocess.call(cmd_str, cwd=cwd, shell=True)
     if rc != 0:
         log_err('process terminated with exitcode %s' % (rc))
 
