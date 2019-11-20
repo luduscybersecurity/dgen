@@ -6,11 +6,11 @@ import glob
 
 import dgen_utils
 import dgen_generator
-from dgen_model import dgen_project
-from dgen_model import dgen_document
-from dgen_model import dgen_section
-from dgen_model import dgen_template
-from dgen_model import dgen_file_sorter
+import dgen_model.dgen_project as dgen_project
+import dgen_model.dgen_document as dgen_document
+import dgen_model.dgen_section as dgen_section
+import dgen_model.dgen_template as dgen_template
+import dgen_model.dgen_file_sorter as dgen_file_sorter
 
 
 class dgenConfigParser(object):
@@ -53,7 +53,8 @@ class dgenConfigParser(object):
             self.project.templates_root = self.parse_templates_root(
                 os.getenv('templates_root', project_config['templates_root']))
         if 'pathspec' in project_config:
-            self.project.pathspec = self.parse_pathspec(project_config['pathspec'])
+            self.project.pathspec = self.parse_pathspec(
+                project_config['pathspec'])
         if 'template' in project_config:
             self.project.template = self.parse_template(
                 os.getenv('template', project_config['template']))
@@ -219,4 +220,3 @@ class dgenConfigParser(object):
         for key in conf:
             if not key in known:
                 dgen_utils.log_err('unknown attribute:', key)
-
