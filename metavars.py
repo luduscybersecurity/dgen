@@ -1,17 +1,17 @@
 #!/usr/bin/env python
 
+import urllib.parse
+import sys
+import codecs
+import re
+import panflute
+from panflute import Link, Str, ListContainer, Code
 import dgen_utils
 
 # disable annoying warning from click caused by panflute. An upgrade to python 3 might fix
 import click
 click.disable_unicode_literals_warning = True
-from panflute import Link, Str, ListContainer, Code
-import panflute
 
-import re
-import codecs
-import sys
-import urllib2
 
 PATTERN = None
 PATTERN_BAD = None
@@ -24,11 +24,11 @@ def init_metavars(doc):
 
 
 def filter_text(text, document):
-    text = urllib2.unquote(text)
+    text = urllib.parse.unquote(text)
     for match in PATTERN.finditer(text):
         field = match.group(2)
         result = document.get_metadata(field, None)
-        if isinstance(result, unicode):
+        if isinstance(result, str):
             return match.group(1) + result + match.group(3)
         dgen_utils.log_warn("metavar not found in document:", field)
     match_bad = PATTERN_BAD.match(text)
@@ -69,8 +69,9 @@ def finalize(doc):
 
 
 def main(doc=None):
-    input_stream = codecs.getreader('utf8')(sys.stdin)
-    return panflute.run_filter(filter, prepare=init_metavars, finalize=finalize, doc=doc, input_stream=input_stream)
+    #input_stream = codecs.getreader('utf8')(sys.stdin)
+    # , input_stream=input_stream)
+    return panflute.run_filter(filter, prepare=init_metavars, finalize=finalize, doc=doc)
 
 
 if __name__ == '__main__':

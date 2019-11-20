@@ -4,9 +4,9 @@ import re
 import shutil
 import git
 
-import dgen_document
-import dgen_template
-import dgen_file_sorter
+import dgen_model.dgen_document as dgen_document
+import dgen_model.dgen_template as dgen_template
+import dgen_model.dgen_file_sorter as dgen_file_sorter
 import dgen_utils
 
 

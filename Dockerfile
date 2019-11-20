@@ -1,4 +1,4 @@
-FROM python:2.7-stretch
+FROM python:3.7.5-stretch
 WORKDIR /tmp
 RUN apt-get update && apt-get install -y libssl1.0-dev
 RUN wget https://github.com/jgm/pandoc/releases/download/2.7/pandoc-2.7-1-amd64.deb && dpkg -i pandoc-2.7-1-amd64.deb
