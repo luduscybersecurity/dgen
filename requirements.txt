@@ -1,0 +1,4 @@
+pyyaml
+panflute
+gitpython
+requests
