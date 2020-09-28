@@ -97,6 +97,7 @@ class dgenProject(object):
                 remote.fetch(progress=dgen_utils.GitProgress())
             g = git.Git(repo.working_dir)
             g.checkout(self.pathspec)
+            repo.submodule_update(recursive=True)
         elif os.path.isdir(self.template_dir):
             dgen_utils.copy_files(self.template_dir, self.local_template_dir)
 
