@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import urllib.parse
+from urllib.parse import unquote
 import sys
 import codecs
 import re
@@ -24,7 +24,7 @@ def init_metavars(doc):
 
 
 def filter_text(text, document):
-    text = urllib.parse.unquote(text)
+    text = unquote(text)
     for match in PATTERN.finditer(text):
         field = match.group(2)
         result = document.get_metadata(field, None)
