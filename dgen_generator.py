@@ -53,7 +53,7 @@ class dgenSymbolProcessor(object):
 
     def replace_symbols_in_file(self, path, symbols=None):
         mime_type, _ = mimetypes.guess_type(path)
-        pattern = re.compile(r'text|xml|html|css|javascript|plain')
+        pattern = re.compile(r'text|xsl|html|css|javascript|plain')
         if (mime_type is not None and
                 pattern.search(mime_type) is not None):
             with open(path, 'r') as fpr:
