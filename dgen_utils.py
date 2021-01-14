@@ -79,7 +79,7 @@ def copy_files(src, dst):
                 dst_rec = os.path.join(dst, item)
                 copy_files(src_rec, dst_rec)
         elif exc.errno == errno.ENOTDIR:
-            shutil.copy2(src, dst)
+            shutil.copy(src, dst)
     if not os.path.exists(dst):
         os.makedirs(dst)
 
